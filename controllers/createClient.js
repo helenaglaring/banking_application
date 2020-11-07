@@ -6,12 +6,12 @@ module.exports = async(req, res) => {
     try {
         //console.log(req.body);
 
-        const { firstname, lastname, street_address, city } = req.body;   // extracting client info
+        const { firstname, lastname, streetAddress, city } = req.body;   // extracting client info
         console.log(req.body);
         let newClient= await clientModel.create({
             firstname: firstname,
             lastname: lastname,
-            street_address: street_address,
+            street_address: streetAddress,
             city: city
         });
 

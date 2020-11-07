@@ -38,7 +38,7 @@ const accountRoute = require('./routes/accounts');
 const clientRoute = require('./routes/clients.js');
 
 app.use('/accounts', accountRoute);
-app.use('/clients', clientRoute);
+app.use('/client', clientRoute);
 /*
 app.use('/', (req, res) => {
     console.log('---------- Server received client request ----------');

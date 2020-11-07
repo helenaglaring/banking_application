@@ -8,7 +8,7 @@ const accountModel = require("../models/account");
 module.exports = async(req, res) => {
     try {
         let clientId = req.params.id;
-        const {firstname, lastname, street_name, city} = req.body; // extracting customer info
+        const {firstname, lastname, streetAddress, city} = req.body; // extracting customer info
 
        
         console.log('---------- GET CLIENT ---------- ');
@@ -24,7 +24,7 @@ module.exports = async(req, res) => {
         let newClient = {
             firstname: firstname || originalClient.firstname,
             lastname: lastname || originalClient.lastname,
-            street_name: street_name || originalClient.street_name,
+            street_address: streetAddress || originalClient.street_address,
             city: city || originalClient.city
         }
         console.log("New client object")

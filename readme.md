@@ -1,22 +1,78 @@
-# Banking Application-aflevering
+# DIS EKSAMEN 2020 - Banking application
 
-I denne aflevering er formålet, at leve op til følgende funktionelle krav (og obligatoriske):
+Følgende program er et simpelt bank system udviklet til en bankkasserer. Systemet består af en server applikation, hvor man skal kunne hente alle konti samt et enkelt konto ud fra et id. Systemet skal dernæst udvides til at understøtte de følgende obligatoriske krav:
 
-1. Kunne få balancen på en given kundes account
-2. Vi skal kunne få en liste af accounts.
+
+## Funktionelle og non-funktionelle krav
+
+### Funktionelle krav
+1. Systemet skal indeholde to modeller. **Clients** (kunder) og **Accounts** (konti). Disse skal indeholde følgende felter
+* Client: id (*objectId*), firstname (*String*), lastname (*String*), street_address (*String*), city (*String*)
+* Account: id (*objectId*), balance (*Number*), client_id (*String*), balance (*String*).
+
+2. ystemet skal understøtte følgende CRUD (Create, Read, Update, Delete) funktioner på Client:
+* Opret ny client (Create).
+* Hent eksisterende client (Read clients' eksisterende oplysninger / detaljer). 
+* Opdater en clients oplysninger (Update).
+* Slet en client (Delete).
+
+
+3. Systemet skal understøtte følgende CRUD funktioner på Account:
+* Opret ny account (En client kan have flere accounts). 
+* Læs accountens balance.
+* Opdater accountens balance (hæv og indsæt).
+* Overfør penge fra en account til en anden.
+* Slet en account.
+
+
+4. Ovenstående funktioner skal understøttes gennem følgende API-specifikation (DET ER VIGTIGT I BRUGER SAMME NAVNE TIL ENDPOINTS OG PARAMETRE):
+- Hvis der står :id i endpointet betyder det, at id er et parameter, som skal bruges.name er navnet på parametret
+- Body parameters er formateret som name: Type: req/opt.
+- Name er navnet på parametret
+- Type er typen. Fx String, Number, ObjectID
+- req/opt siger om parametret er obligatorisk eller valgfrit
+
+
+
+| Endpoint              | Metode | body parameters name: Type: req/opt                                                       | Beskrivelse                                                   |
+|-----------------------|--------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------|
+| /accounts             | GET    | -                                                                                         | Returnerer et array af alle konti                             |
+| /accounts             | POST   | client_id: String: req balance: Number: opt                                               | Opretter en ny konto                                          |
+| /accounts/:id         | GET    | -                                                                                         | Returnerer en specific konto                                  |
+| /accounts/:id         | PUT    | balance: Number: opt                                                                      | Ændrer en konto. Det er kun balancen som kan ændres.          |
+| /accounts/:id         | DELETE | -                                                                                         | Sletter en konto med det specifikke id                        |
+| /accounts/:id/balance | GET    | -                                                                                         | Returnerer en specific kontos balance i formen {balance: 200} |
+| /accounts/transfer    | PUT    | fromAccount:String:req toAccount: String: req amount: Number: req                         | Overfører penge fra en konto til en anden                     |
+| /client               | GET    | -                                                                                         | Returnere et array af alle kunder                             |
+| /client               | POST   | firstname: String: req lastname: String: req streetAddress: String: req city: String: req | Opretter en ny kunde                                          |
+| /client/:id           | GET    | -                                                                                         | Returnerer en specific kunde                                  |
+| /client/:id           | PUT    | firstname: String: opt lastname: String: opt streetAddress: String: opt city: String: opt | Opdaterer en kundes oplysninger                               |
+| /client/:id           | DELETE | -                                                                                         | Sletter kunden med det specifikke id                          |
+
+
+
+### Non-funktionelle krav
+
+1. Netværksforbindelser skal være krypteret.
+2. Systemet skal understøtte at der kan oprettes flere instanser af servere, som alle sammen bruger
+den samme underlæggende datakilde (database / fil / hvad end i vælger, den skal bare være
+persistent)
+3. En load balancer skal distribuere trafikken mellem de forskellige servere.
+4. Der skal laves en "one-click-run" løsning. Fx et script som starter hele systemet (loadbalancer,
+forskellige applikationer osv).
+
+## TEST
+Der udleveres et test script skrevet i mocha, som du kan bruge til at teste jeres endpoints. Dette gøres ved at tilføje "test": "./node_modules/.bin/mocha --timeout 10000 --exit", til din package.json under scripts. Og så testes der gennem npm test . Hvis alt er lavet korrekt, skulle du gerne få 15 passing tests. Husk at dette er blot en hjælp til dig, for at finde ud af, hvor din kode er gået galt.
 
 
 ## Kør programmet
 1) Initialiser ved at køre følgende kommando i terminal:
-```npm init```
+```npm install```
 
-2) Diriger til mappen *3_handin_template*:
-```cd 3_handin_template```
+2) Kør programmet ved at køre følgende script i terminalen
+```./run.sh```
 
-3) Start appen ved følgende kommando
-```node app.js```
-
-4) Send GET requests, der rammer de 2 endpoints.
+3) Send requests, der rammer endpoints.
 
 
 ## Fil-struktur
@@ -28,49 +84,68 @@ I **'routes' > 'accounts.js'** har jeg oprettet de forskellige endpoints. Her in
 
 I **'controllers'-mappen** har jeg oprettet mine controllers, som er selve requesthandlerne, dvs. de funktioner der eksekveres, når et specifikt endpoint rammes. 
 
-   1) I filen 'getAccounts.js' er controlleren for, at kunne få en liste med alle accounts. Den har følgende endpoint:
-
-   ```GET http://localhost:8080/accounts```
-
-   2) I filen 'getAccount.js' er controlleren for, at kunne få balancen på en specifik kundes account ud. Den har følgende endpoint:
-
-   ```GET http://localhost:8080/accounts/:id```
-
-
 
 ## Endpoints:
 
-**1) Returnerer en liste med alle accounts**
+### Accounts
+**1) Returnerer et array af alle konti**
 
-   ```GET http://localhost:8080/accounts```
+   ```GET https://localhost:3443/accounts```
 
-**2) Returnerer balancen for en specifik account ud fra accountID'et**
+**2) Opretter en ny konto**
 
-   ```GET http://localhost:8080/accounts/:id```
+   ```POST https://localhost:3443/accounts```
 
-**3) Opretter en ny account**
+**3) Returnerer en specific konto**
 
-   ```POST http://localhost:8080/accounts```
+   ```GET https://localhost:3443/accounts/:id```
 
-**4) Sletter en specifik account ud fra accountID'et**
 
-   ```DELETE http://localhost:8080/accounts/:id```
+**4) Ændrer en konto. Det er kun balancen som kan ændres**
 
-**5) Opdaterer account-balancen for en specifik account vha. PUT-request**
+   ```PUT https://localhost:3443/accounts/:id```
 
-   ```PUT http://localhost:8080/accounts/:id```
+**5) Sletter en konto med det specifikke id**
 
-   **Opdaterer account-balancen for en specifik account vha. PATCH-request**
+   ```DELETE https://localhost:3443/accounts/:id```   
+
+
+**6) Returnerer en specific kontos balance i formen `{balance: 200}`**
+
+   ```GET https://localhost:3443/accounts/:id/balance```  
+
+
+**7) Overfør penge fra én konto til en anden**
+ request-body sendes et objekt der indeholder 3 attributter. 1) ID'et på den konto, der skal overføres penge fra. 2) 'to', som 
+er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er beløbet der skal overføres. 
    
-   ```PATCH http://localhost:8080/accounts/:id```
+   ```PUT https://localhost:3443/accounts/transfer```  
 
+### Client
 
-**6) Overfør penge fra én konto til en anden**
-I parametren i URL'en angives ID'et på den konto, der skal overføres penge fra. I request-body sendes et objekt der indeholder 2 attributter. 1) 'to', som 
-er ID'et på den konto, der skal overføres penge til. 2) 'amount', som er beløbet der skal overføres. 
-   
-   ```http://localhost:8080/accounts/transfer/:fromID```
+**8) Returnerer et array af alle kunder**
 
+   ```GET https://localhost:3443/client``` 
+
+**9) Opretter en ny kunde**
+
+   ```POST https://localhost:3443/client``` 
+
+**10) Returnerer en specific kunde**
+
+   ```GET https://localhost:3443/client/:id``` 
+
+**11) Opdaterer en kundes oplysninger**
+
+   ```PUT https://localhost:3443/client/:id``` 
+
+**12) Sletter kunden med det specifikke id**
+
+   ```DELETE https://localhost:3443/client/:id``` 
+
+**13) Returnerer et array med alle konti på en given kunde**
+
+   ```GET https://localhost:3443/client/:id/accounts``` 
 
 
 ##  Generelt om opgaven
@@ -106,27 +181,3 @@ Denne struktur betyder, at endpoints'ne er den del af serveren som er tilgængel
 4. Disse sendes retur til klienten (fx jeres terminal, hvis der bruges curl) i et format som er tilladt over TCP. Fx en JSON-string.
 
 Nederst ser i et eksempel på en HTTP-post request. Her er metoden sat til `POST`, og der er tilføjet et ekstra felt kaldet `body`. Body indeholder den data, der sendes af sted til serveren. Så når serveren modtager dette på samme endpoint `localhost:8080/accounts`, køres der en anden metode, fordi det er en `POST`request, og det registrerer serveren. Serveren beder derfor databasen om at oprette en ny account. Databasen svarer serveren tilbage med en success eller en failure, og serveren returnerer denne til klienten. 
-
-
-## Assignment requirements
-We ask you to develop a simple system to query account balances in a banking system. The system should consist of a client application and a server application. 
-The system will only be used by a single teller.
-Functional requirements
-1) The system should allow teller to query the balance of a single account.
-2) The system should allow teller to query the system for a list of accounts.
-
-WE WANT YOU TO HANDIN A VIDEO AS WELL SHOWING THAT YOU HAVE SOLVED AT LEAST THE TWO FUNCTIONAL REQUIREMENTS. VOICEOVER IS OPTIONAL 😉. YOU CAN SEE AN EXAMPLE BELOW:
-VERY LOW QUALITY. CHECK SLACK FOR BETTER QUALITY
- 
-If you have time, also develop following optional extras.
-Nonfunctional Requirements:
-1) Secure communications through TLS.
-2) Add multiple clients.
-3) Add multiple servers with shared data storage.
-4) Add client authentication.
- 
-REMEMBER: Your code must be easy to run! You must either provide an internet address, a ready-to-run jar-file, a windows executable or a bat-file. In any case it must be clearly described. It is highly recommended that you try this out on an unsuspecting friend or colleague, who will test that there are no difficulties in accessing/executing your program.
-
-Tips
-1. Use the book!
-2.  It’s fine to look stuff up online.
