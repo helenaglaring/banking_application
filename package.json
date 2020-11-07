@@ -1,0 +1,29 @@
+{
+  "name": "banking_app",
+  "version": "1.0.0",
+  "description": "I denne aflevering er formålet, at leve op til følgende funktionelle krav (og obligatoriske):",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha --timeout 10000 --exit",
+    "seaport": "seaport"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "http-proxy": "^1.18.1",
+    "mongoose": "^5.10.10",
+    "rsa-json": "^0.2.1",
+    "seaport": "^2.0.9"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helenaglaring/banking_application.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helenaglaring/banking_application/issues"
+  },
+  "homepage": "https://github.com/helenaglaring/banking_application#readme"
+}
