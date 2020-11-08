@@ -148,6 +148,13 @@ er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er belø
    ```GET https://localhost:3443/client/:id/accounts``` 
 
 
+## Datamodeller
+
+### ERD
+
+![](./ERD_banking_application.png)
+
+
 ##  Generelt om opgaven
 For at kunne løse ovenstående opgave, har vi brug for to ting:
 
