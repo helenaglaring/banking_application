@@ -106,6 +106,7 @@ describe("Client tests", () => {
       chai
         .request(baseUrl)
         .get("/client")
+
         .end(async (err, res) => {
           res.should.have.status(200);
           const id = lastAdded._id;
@@ -121,6 +122,9 @@ describe("Client tests", () => {
               done();
             });
         });
+      
+
+
     });
   });
 
