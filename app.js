@@ -84,6 +84,7 @@ const httpsServer = https.createServer(options, app);
 httpsServer.listen(ports.register('server'), function() {
     db.getConnection().then(
         console.log("---------- DATABSE CONNECTED ----------\nDatabase is connected")
+    
     );
     console.log('---------- SERVER LISTENING  ----------');
     console.log('Server listening on port %d', this.address().port);

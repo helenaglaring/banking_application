@@ -7,7 +7,8 @@ module.exports = async(req, res) => {
         //console.log(req.body);
 
         const { firstname, lastname, streetAddress, city } = req.body;   // extracting client info
-        console.log(req.body);
+    
+
         let newClient= await clientModel.create({
             firstname: firstname,
             lastname: lastname,
@@ -21,7 +22,7 @@ module.exports = async(req, res) => {
         console.log(message);
         console.log(newClient);
 
-        res.send(newClient)
+        res.json(newClient)
 
     } catch (err) {
         console.log({ message: err })

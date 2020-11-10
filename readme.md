@@ -152,7 +152,7 @@ er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er belø
 
 ### ERD
 
-![](./ERD_banking_application.png)
+![](./public/ERD_banking_application.png)
 
 
 ##  Generelt om opgaven

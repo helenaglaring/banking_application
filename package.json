@@ -14,10 +14,14 @@
     "express": "^4.17.1",
     "http-proxy": "^1.18.1",
     "mongoose": "^5.10.10",
-    "rsa-json": "^0.2.1",
     "seaport": "^2.0.9"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.1",
+    "node-fetch": "^2.6.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/helenaglaring/banking_application.git"

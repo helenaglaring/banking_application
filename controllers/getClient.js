@@ -19,7 +19,6 @@ module.exports = async(req, res) => {
         console.log(client);
 
         res.json({
-            message,
             client
         })
 

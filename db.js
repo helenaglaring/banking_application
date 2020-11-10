@@ -16,6 +16,10 @@ const getConnection = async () => {
     return connection;
 };
 
+//mongoose.connection._connectionString
+
+
+
 module.exports = {
     getConnection: getConnection
 };

@@ -33,7 +33,13 @@ module.exports = async(req, res) => {
 
         // Update excisting client using the findByIdAndUpdate.
         // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
-        let updClient = await clientModel.findByIdAndUpdate(clientId, newClient, {new: true, useFindAndModify: false} ).exec();
+        let updClient = await clientModel.findByIdAndUpdate(
+            // Filtering by the _id of the clint we want to update
+            clientId, 
+            // Update all the attributes in the Address schema by passing in the newClient-object with the updated attributes
+            newClient, 
+            // We want the updated object returned. Therefore we set it to true.
+            {new: true, useFindAndModify: false} ).exec();
 
         console.log(`-> CLIENT WAS UPDATED: `);
         let updMessage = `CLIENT ${updClient.firstname}'s information was updated:`;
