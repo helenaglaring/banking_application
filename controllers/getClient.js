@@ -18,6 +18,17 @@ module.exports = async(req, res) => {
         console.log(`-> CLIENT: `);
         console.log(client);
 
+        let clie;
+
+        clientModel.findOne({}, function (err, client) {
+            clie = client;
+            console.log("client")
+          console.log(client)
+          });
+          console.log("clie")
+          console.log(clie)
+          
+
         res.json({
             client
         })

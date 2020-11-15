@@ -2,39 +2,31 @@ const express = require('express');
 const router = express.Router();
 
 // ---------- IMPORT CONTROLLERS ---------- //
-const getAllAccountsController = require('../controllers/getAllAccounts');      // GET all accounts
-const getAccountController = require('../controllers/getAccount');              // GET account
-const getAccountBalanceController = require('../controllers/getAccountBalance');// GET account
-const createAccountController = require('../controllers/createAccount');        // CREATE new account
-const updateBalanceController = require('../controllers/updateAccountBalance'); // UPDATE account balance
-const deleteAccountController = require('../controllers/deleteAccount');        // DELETE account
-const transferController = require('../controllers/transfer');                  // UPDATE 2 account balances
+const accountController = require('../controllers/accountController')
 
-// ---------- OBLIGATORISKE ENDPOINTS ---------- //
+// ----------  ENDPOINTS ---------- //
 // Endpoint for getting all accounts
-router.get('/', getAllAccountsController);
+router.get('/', accountController.getAccounts);                     // GET all accounts
 
 // Endpoint for creating a new account
-router.post('/', createAccountController);
+router.post('/', accountController.createAccount);                  // CREATE new account           
 
 // Endpoint make a transaction
-router.put('/transfer', transferController);
+router.put('/transfer', accountController.transfer);                // UPDATE 2 account balances
 
 // Endpoint for getting a specific account by id
-router.get('/:id', getAccountController);
+router.get('/:id', accountController.getAccount);                   // GET account
 
 
-// Endpoint to update the balance of an excisting account using PUT
-router.put('/:id', updateBalanceController);
+// Endpoint to update the balance of an excisting account
+router.put('/:id', accountController.updateAccountBalance);         // UPDATE account balance
 
 // Endpoint to delete an excisting account
-router.delete('/:id', deleteAccountController);
+router.delete('/:id', accountController.deleteAccount);             // DELETE account
 
 
 // Endpoint for getting a specific account balance by id
-router.get('/:id/balance', getAccountBalanceController);
-
-
+router.get('/:id/balance', accountController.getAccountBalance);    // GET account balance
 
 
 

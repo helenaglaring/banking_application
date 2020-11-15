@@ -10,9 +10,9 @@ const chaiHttp = require("chai-http");
 const { expect } = require("chai");
 chai.use(chaiHttp);
 const baseUrl = "https://localhost:3443"
-
+//config.databaseURL
 // connecto to db
-let connection = mongoose.connect(config.databaseURL, {
+let connection = mongoose.connect('mongodb://localhost/BankingApp', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -87,6 +87,7 @@ describe("Client tests", () => {
     });
   });
   describe("/GET clients after post", () => {
+    // get all clients
     it("it should GET all the clients", (done) => {
       chai
         .request(baseUrl)
@@ -102,7 +103,7 @@ describe("Client tests", () => {
 
   describe("/GET single client after post", () => {
     it("it should GET single client", (done) => {
-      // get all clients
+      // get one client
       chai
         .request(baseUrl)
         .get("/client")
@@ -110,15 +111,16 @@ describe("Client tests", () => {
         .end(async (err, res) => {
           res.should.have.status(200);
           const id = lastAdded._id;
+         
           chai
             .request(baseUrl)
             .get(`/client/${id}`)
             .end((err, res) => {
-              res.body.should.a("object");
+              res.body.client.should.a("object");
               res.should.have.status(200);
-              res.body.firstname.should.be.equal(lastAdded.firstname);
-              res.body.lastname.should.be.equal(lastAdded.lastname);
-              res.body.city.should.be.equal(lastAdded.city);
+              res.body.client.firstname.should.be.equal(lastAdded.firstname);
+              res.body.client.lastname.should.be.equal(lastAdded.lastname);
+              res.body.client.city.should.be.equal(lastAdded.city);
               done();
             });
         });
@@ -139,16 +141,23 @@ describe("Client tests", () => {
           chai
             .request(baseUrl)
             .put(`/client/${latest._id}`)
+            .set('content-type', 'application/json')
             .send({
-              firstname: "EDITED",
-              lastname: "EDITED",
+              "firstname": "EDITED",
+              "lastname": "EDITED"
             })
             .end((err, res) => {
+              try {
               res.should.have.status(200);
               res.body.firstname.should.be.equal("EDITED");
               res.body.lastname.should.be.equal("EDITED");
               res.body.city.should.be.equal(latest.city);
-              res.body.streetAddress.should.be.equal(latest.streetAddress);
+              res.body.street_address.should.be.equal(latest.street_address);
+
+              } catch(err) {
+                console.log(err)
+              }
+              
               done();
             });
         });
@@ -168,7 +177,7 @@ describe("Client tests", () => {
             .delete(`/client/${id}`)
             .end((err, res) => {
               res.should.have.status(200);
-              res.body._id.should.be.equal(id);
+              res.body.delClient._id.should.be.equal(id);
               res.should.have.status(200);
               chai
                 .request(baseUrl)
@@ -190,12 +199,15 @@ describe("Account tests", () => {
   let client;
   let accountsLength;
 
-  before((done) => {
+//Removing argument "done"
+
+  before( (done) => {
     Client.findOne({}, function (err, res) {
       client = res;
-      done();
     });
+    done()
   });
+
 
   describe("/GET empty accounts", () => {
     it("it should GET all the accounts", (done) => {
@@ -262,15 +274,16 @@ describe("Account tests", () => {
         .end(async (err, res) => {
           res.should.have.status(200);
           const id = lastAddedAcc._id;
+    
           chai
             .request(baseUrl)
             .get(`/accounts/${id}`)
             .end((err, res) => {
-              res.body.should.a("object");
+              res.body.account.should.a("object");
               res.should.have.status(200);
-              res.body.balance.should.be.equal(lastAddedAcc.balance);
-              res.body.alias.should.be.equal(lastAddedAcc.alias);
-              res.body.client_id.should.be.equal(lastAddedAcc.client_id);
+              res.body.account.balance.should.be.equal(lastAddedAcc.balance);
+              res.body.account.alias.should.be.equal(lastAddedAcc.alias);
+              res.body.account.client_id.should.be.equal(lastAddedAcc.client_id);
               done();
             });
         });
@@ -329,7 +342,7 @@ describe("Account tests", () => {
                 .get(`/accounts/${fromAccountBefore._id}`)
                 .end((err, res) => {
                   res.should.have.status(200);
-                  res.body.balance.should.be.equal(
+                  res.body.account.balance.should.be.equal(
                     fromAccountBefore.balance - amount
                   );
                   chai
@@ -337,7 +350,7 @@ describe("Account tests", () => {
                     .get(`/accounts/${toAccountBefore._id}`)
                     .end((err, res) => {
                       res.should.have.status(200);
-                      res.body.balance.should.be.equal(
+                      res.body.account.balance.should.be.equal(
                         toAccountBefore.balance + amount
                       );
                       done();
