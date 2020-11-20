@@ -22,7 +22,7 @@ const ClientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    street_address: {
+    streetAddress: {
         type: String,
         required: true,
     },

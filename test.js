@@ -4,13 +4,12 @@ const Account = require("./models/account");
 const fetch = require("node-fetch");
 const chai = require("chai");
 const should = chai.should();
-const config = require("./config/config.js");
 // const expect = require('chai').expect;
 const chaiHttp = require("chai-http");
 const { expect } = require("chai");
 chai.use(chaiHttp);
 const baseUrl = "https://localhost:3443"
-//config.databaseURL
+
 // connecto to db
 let connection = mongoose.connect('mongodb://localhost/BankingApp', {
   useNewUrlParser: true,
@@ -52,7 +51,7 @@ describe("Client tests", () => {
     it("it should GET all the clients", (done) => {
       chai
         .request(baseUrl)
-        .get("/client")
+        .get("/clients")
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("array");
@@ -66,7 +65,7 @@ describe("Client tests", () => {
     it("it should POST client 1", (done) => {
       chai
         .request(baseUrl)
-        .post("/client")
+        .post("/clients")
         .send(clientTemplate())
         .end((err, res) => {
           res.should.have.status(200);
@@ -77,7 +76,7 @@ describe("Client tests", () => {
     it("it should POST client 2", (done) => {
       chai
         .request(baseUrl)
-        .post("/client")
+        .post("/clients")
         .send(clientTemplate())
         .end((err, res) => {
           res.should.have.status(200);
@@ -91,7 +90,7 @@ describe("Client tests", () => {
     it("it should GET all the clients", (done) => {
       chai
         .request(baseUrl)
-        .get("/client")
+        .get("/clients")
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a("array");
@@ -106,7 +105,7 @@ describe("Client tests", () => {
       // get one client
       chai
         .request(baseUrl)
-        .get("/client")
+        .get("/clients")
 
         .end(async (err, res) => {
           res.should.have.status(200);
@@ -114,13 +113,13 @@ describe("Client tests", () => {
          
           chai
             .request(baseUrl)
-            .get(`/client/${id}`)
+            .get(`/clients/${id}`)
             .end((err, res) => {
-              res.body.client.should.a("object");
+              res.body.should.a("object");
               res.should.have.status(200);
-              res.body.client.firstname.should.be.equal(lastAdded.firstname);
-              res.body.client.lastname.should.be.equal(lastAdded.lastname);
-              res.body.client.city.should.be.equal(lastAdded.city);
+              res.body.firstname.should.be.equal(lastAdded.firstname);
+              res.body.lastname.should.be.equal(lastAdded.lastname);
+              res.body.city.should.be.equal(lastAdded.city);
               done();
             });
         });
@@ -134,13 +133,13 @@ describe("Client tests", () => {
     it("Should edit last added client", (done) => {
       chai
         .request(baseUrl)
-        .get("/client")
+        .get("/clients")
         .end((err, res) => {
           res.should.have.status(200);
           const latest = res.body[res.body.length - 1];
           chai
             .request(baseUrl)
-            .put(`/client/${latest._id}`)
+            .put(`/clients/${latest._id}`)
             .set('content-type', 'application/json')
             .send({
               "firstname": "EDITED",
@@ -152,12 +151,13 @@ describe("Client tests", () => {
               res.body.firstname.should.be.equal("EDITED");
               res.body.lastname.should.be.equal("EDITED");
               res.body.city.should.be.equal(latest.city);
-              res.body.street_address.should.be.equal(latest.street_address);
+              res.body.streetAddress.should.be.equal(latest.streetAddress);
 
               } catch(err) {
                 console.log(err)
               }
               
+    
               done();
             });
         });
@@ -168,20 +168,20 @@ describe("Client tests", () => {
     it("Should delete last added client", (done) => {
       chai
         .request(baseUrl)
-        .get("/client")
+        .get("/clients")
         .end(async (err, res) => {
           res.should.have.status(200);
           const id = res.body[res.body.length - 1]._id;
           chai
             .request(baseUrl)
-            .delete(`/client/${id}`)
+            .delete(`/clients/${id}`)
             .end((err, res) => {
               res.should.have.status(200);
-              res.body.delClient._id.should.be.equal(id);
+              res.body._id.should.be.equal(id);
               res.should.have.status(200);
               chai
                 .request(baseUrl)
-                .get("/client")
+                .get("/clients")
                 .end((err, res) => {
                   res.should.have.status(200);
                   res.body.should.be.a("array");
@@ -267,7 +267,7 @@ describe("Account tests", () => {
 
   describe("/GET single account after post", () => {
     it("it should GET single account", (done) => {
-      // get all clients
+      // get single account
       chai
         .request(baseUrl)
         .get("/accounts")
@@ -279,11 +279,11 @@ describe("Account tests", () => {
             .request(baseUrl)
             .get(`/accounts/${id}`)
             .end((err, res) => {
-              res.body.account.should.a("object");
+              res.body.should.a("object");
               res.should.have.status(200);
-              res.body.account.balance.should.be.equal(lastAddedAcc.balance);
-              res.body.account.alias.should.be.equal(lastAddedAcc.alias);
-              res.body.account.client_id.should.be.equal(lastAddedAcc.client_id);
+              res.body.balance.should.be.equal(lastAddedAcc.balance);
+              res.body.alias.should.be.equal(lastAddedAcc.alias);
+              res.body.client_id.should.be.equal(lastAddedAcc.client_id);
               done();
             });
         });
@@ -342,7 +342,7 @@ describe("Account tests", () => {
                 .get(`/accounts/${fromAccountBefore._id}`)
                 .end((err, res) => {
                   res.should.have.status(200);
-                  res.body.account.balance.should.be.equal(
+                  res.body.balance.should.be.equal(
                     fromAccountBefore.balance - amount
                   );
                   chai
@@ -350,7 +350,7 @@ describe("Account tests", () => {
                     .get(`/accounts/${toAccountBefore._id}`)
                     .end((err, res) => {
                       res.should.have.status(200);
-                      res.body.account.balance.should.be.equal(
+                      res.body.balance.should.be.equal(
                         toAccountBefore.balance + amount
                       );
                       done();

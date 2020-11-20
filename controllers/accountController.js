@@ -1,6 +1,7 @@
 const accountModel = require('../models/account');
 const clientModel = require('../models/client');
 const transactionsModel = require('../models/transactions');
+const clientAuthMiddleware = require('../middleware/clientAuth');
 
 /*
 getAccounts         // GET all accounts
@@ -13,9 +14,12 @@ transfer            // UPDATE 2 account balances
 
 */
 
+// Todo: save() ved update wait toaccount.save(), fromAccount.save
+
 
 module.exports = {
 
+// -------------------- GET all accounts --------------------//
     // Getting a list with all accounts 
     // Endpoint that returns a list with all accounts in the collection     
     getAccounts: async(req, res) => {
@@ -25,12 +29,15 @@ module.exports = {
             console.log('---------- ALL ACCOUNTS ---------- ');
             console.log(accounts);
     
-            res.json(accounts)
+            return res.status(200).json(accounts)
+
         } catch (err) {
             console.log({ message: err })
+            return res.status(404).send("Account not found");
         }
     },
 
+// -------------------- CREATE new account --------------------//
     // Endpoint for adding a new account
     createAccount: async(req, res) => {
         try {
@@ -39,31 +46,30 @@ module.exports = {
 
             // Finding client by ID to get alias, which is client's first name
             const client = await clientModel.findById(client_id).exec();
-        
-            console.log(client)
+
             console.log(`Client with client_id ${client.id} found: `);
+            console.log(client)
 
 
             let newAccount = await accountModel.create({
                 client_id: client_id,
                 balance: balance,
                 alias: alias
-            });
-
+            }).exec();
 
             console.log('---------- NEW ACCOUNT ---------- ');
-            let message = "New account created: ";
-            console.log(message);
-            console.log(newAccount);
+            console.log("New account created: ");
+            console.log(newAccount)
 
-            res.json(newAccount)
+            return res.status(200).json(newAccount)
 
         } catch (err) {
             console.log({ message: err })
+            return res.status(404).send(err.message);
         }
     },
 
-
+// -------------------- GET account --------------------//
     // Get a specific account by ID
     // Endpoint, that will be able to return a specific account by id.
     getAccount: async(req, res) => {
@@ -74,50 +80,57 @@ module.exports = {
 
             let account = await accountModel.findById(accountId).exec();
 
-            let message = `Customer ${account.alias} has following account: `;
+            if(!account) throw "No account found"
+
+
             console.log(`-> ACCOUNT: `);
-            console.log(message);
+            console.log(`Customer ${account.alias} has following account: `);
             console.log(account);
 
-            res.json({
-                account
-            })
+            return res.status(200).json(account)
 
         } catch (err) {
+            //console.log("fejl")
             console.log({ message: err })
+            return res.status(404).send(err);
+            
         }
     },
 
 
-
+// -------------------- GET account balance --------------------//
     // Get the balance of a specific account by accountId
     // Endpoint, that will be able to return a specific account-balance by id.
     getAccountBalance: async(req, res) => {
         try {
-            console.log(req.params)
+        
             let accountId = req.params.id;
+            let errMsg;
+
             console.log('---------- GET ACCOUNT BALANCE ---------- ');
             console.log(`AccountID: ${accountId}`);
 
             let account = await accountModel.findById(accountId).exec();
+            if (!account) throw "No account matches the given accountId"
+
             console.log(`Account of customer ${account.alias} found: `);
             console.log(account);
 
-            let accountBalance = account.balance;
-            let message = `Customer ${account.alias} has an account with the balance: `;
             console.log(`-> ACCOUNT BALANCE: `);
-            console.log(message);
-            console.log(accountBalance);
+            console.log({"balance": account.balance})
+            
 
-            res.json({
-                accountBalance
+            return res.status(200).json({
+                balance: account.balance
             })
 
         } catch (err) {
-            console.log({ message: err })
+            console.log({ message: err });
+            return res.status(404).send(err);
         }
     },
 
+// -------------------- UPDATE account balance --------------------//
     // Endpoint to update the balance of an excisting account using accountId
     // For test
     updateAccountBalance: async(req, res) => {
@@ -131,6 +144,10 @@ module.exports = {
 
             // Finding the 'original' account by the account ID
             let originalAccount = await accountModel.findById(accountId).exec();
+
+            // Checking if there is an account with the given accountID sent with the request
+            if (!originalAccount) throw "No account found with the given ID"
+
             console.log(`Account of customer ${originalAccount.alias} found: `);
             console.log(originalAccount);
 
@@ -147,19 +164,20 @@ module.exports = {
                 { new: true, useFindAndModify: false} ).exec();
 
             console.log(`-> ACCOUNT BALANCE WAS UPDATED: `);
-            let updMessage = `Customer ${updAccount.alias}s account balance was updated from: ${originalAccount.balance} kr to ${updAccount.balance} kr`
-
-            console.log(updMessage);
+            console.log(`Customer ${updAccount.alias}s account balance was updated from: ${originalAccount.balance} kr to ${updAccount.balance} kr`);
             console.log(updAccount);
 
-            res.json(updAccount)
+            return res.status(200).json(updAccount)
+
+        
 
         } catch (err) {
             console.log({ message: err })
+            return res.status(404).send(err);
         }
     },
 
-
+// -------------------- DELETE account --------------------//
     // Endpoint to delete an excisting account by accountId
     deleteAccount: async(req, res) => {
         try {
@@ -170,6 +188,7 @@ module.exports = {
 
             // Finding the 'original' account by the account ID
             let account = await accountModel.findById(accountId).exec();
+
             console.log(`Account of customer ${account.alias} found: `);
             console.log(account);
 
@@ -178,18 +197,19 @@ module.exports = {
             let delAccount = await accountModel.findByIdAndDelete(accountId).exec();
 
             console.log(`-> ACCOUNT WAS DELETED: `);
-            let message = `Customer ${account.alias}'s account was deleted from the accounts-collection`;
+            console.log(`Customer ${account.alias}'s account was deleted from the accounts-collection: `);
+            console.log(delAccount);
 
-            console.log(message);
-
-            res.json(delAccount)
+            return res.status(200).json(delAccount)
 
         } catch (err) {
             console.log({ message: err })
+            return res.status(404).send("No account with the given ID");
         }
     },
 
-
+// -------------------- TRANSFER --------------------//
+// save?
     // Endpoint to transfer money from one account to another
     transfer: async(req, res) => {
         try {
@@ -207,6 +227,8 @@ module.exports = {
             console.log(from);
 
             console.log(`-> INITIAL ACCOUNT BALANCE: ${from.balance} kr. `);
+
+            
 
 
             console.log('---------- TRANSACTION TO ---------- ');
@@ -252,7 +274,6 @@ module.exports = {
 
                 console.log(updMessageFrom);
                 console.log(updAccountFrom);
-
                 // --------- TRANSACTION TO ----------//
                 let updBalanceTo = to.balance + amount;
 
@@ -265,15 +286,16 @@ module.exports = {
 
                 console.log(`-> ACCOUNT BALANCE WAS UPDATED: `);
                 let updMessageTo = `Customer ${updAccountTo.alias}s account balance was updated from: ${to.balance} kr to ${updAccountTo.balance} kr`;
-
+    
                 console.log(updMessageTo);
                 console.log(updAccountTo);
 
-                res.json({updMessageTo, updMessageFrom, newTransaction})
+                return res.status(200).json({updMessageTo, updMessageFrom, newTransaction})
             }
 
         } catch (err) {
             console.log({ message: err })
+            return res.status(404).send("Something went wrong");
         }
     }
 
