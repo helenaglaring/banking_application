@@ -55,7 +55,7 @@ module.exports = {
                 client_id: client_id,
                 balance: balance,
                 alias: alias
-            }).exec();
+            });
 
             console.log('---------- NEW ACCOUNT ---------- ');
             console.log("New account created: ");

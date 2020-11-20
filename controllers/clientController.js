@@ -44,7 +44,7 @@ module.exports = {
                 lastname: lastname,
                 streetAddress: streetAddress,
                 city: city
-            }).exec();
+            });
 
 
             console.log('---------- CREATE CLIENT ---------- ');
