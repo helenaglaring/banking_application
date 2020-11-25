@@ -23,3 +23,6 @@ const getConnection = async () => {
 module.exports = {
     getConnection: getConnection
 };
+
+
+// Kilde: https://github.com/DIS-2020/bankingApplication/blob/solution/3_handin_template/db.js

@@ -2,69 +2,69 @@
 //---------- Requests using HTTPS ----------//
 
 // ACCOUNTS //
-GET http://localhost:8080
+GET https://localhost:3443
 
 ###
 // GET all accounts
-// URL: http://localhost:8080/accounts
+// URL: https://localhost:3443/accounts
 
-GET http://localhost:8080/accounts
+GET https://localhost:3443/accounts
 
 
 
 ###
 // CREATE new account
-// URL: http://localhost:8080/accounts
+// URL: https://localhost:3443/accounts
 
-POST http://localhost:8080/accounts
+POST https://localhost:3443/accounts
 Content-Type: application/json;
 
     {
-        "firstname": "Postman",
-        "lastname": "Per",
-        "street_name": "Postvej",
-        "city": "Postby"
+        "client_id": "Postman",
+        "balance": 1234,
+        "alias": "Per",
     }
 
 ###
 // GET one specific account by ID
-// URL: http://localhost:8080/accounts/:id
+// URL: https://localhost:3443/accounts/:id
 
-GET http://localhost:8080/accounts/:id
+GET https://localhost:3443/accounts/:id
 
 
 ###
 // DELETE account by ID
-// URL: http://localhost:8080/accounts/:id
+// URL: https://localhost:3443/accounts/:id
 
-DELETE http://localhost:8080/accounts/5f96e0b1cba55f4221196db0
+DELETE https://localhost:3443/accounts/5f96e0b1cba55f4221196db0
 
 
 ### 
 
 // UPDATE account balance of a specific account using PUT
-// URL: http://localhost:8080/accounts/:id
+// URL: https://localhost:3443/accounts/:id
 
-PUT http://localhost:8080/accounts/5f96e0c3cba55f4221196db1
+PUT https://localhost:3443/accounts/5f96e0c3cba55f4221196db1
 Content-Type: application/json
 
 {
-    "balance": 2222
+    "balance": 2222,
+    "alias": "alias navn"
 }
 
 
 ###
 // GET account balance of a specific account by ID
-// URL: http://localhost:8080/accounts/:id/balance
-GET http://localhost:8080/accounts/5f96e097cba55f4221196daf/balance
+// URL: https://localhost:3443/accounts/:id/balance
+GET https://localhost:3443/accounts/5f96e097cba55f4221196daf/balance
 
 
 
 ### 
 
 // UPDATE 2 account balances when transfering money from one account to another
-// URL: http://localhost:8080/accounts/transfer/
-PUT http://localhost:8080/accounts/transfer
+// URL: https://localhost:3443/accounts/transfer/
+PUT https://localhost:3443/accounts/transfer
 Content-Type: application/json
 
 {
@@ -72,3 +72,62 @@ Content-Type: application/json
     "toAccount": "5f96e097cba55f4221196daf",
     "amount": 50
 }
+
+
+
+
+
+
+// CLIENTS //
+
+
+###
+// GET all clients
+// URL: https://localhost:3443/clients
+
+GET https://localhost:3443/clients
+
+
+
+###
+// CREATE new client
+// URL: https://localhost:3443/clients
+
+POST https://localhost:3443/clients
+Content-Type: application/json;
+
+    {
+        "firstname": "Postman",
+        "lastname": "Per",
+        "streetAddress": "Postvej",
+        "city": "Postby"
+    }
+
+###
+// GET one specific client by ID
+// URL: https://localhost:3443/clients/:id
+
+GET https://localhost:3443/clients/:id
+
+
+###
+// DELETE client by ID
+// URL: https://localhost:3443/clients/:id
+
+DELETE https://localhost:3443/clients/5f96e0b1cba55f4221196db0
+
+
+### 
+
+// UPDATE client information 
+// URL: https://localhost:3443/clients/:id
+
+PUT https://localhost:3443/clients/:id
+Content-Type: application/json
+
+    {
+        "firstname": "Updated firstname",
+        "lastname": "updated lastname",
+        "streetAddress": "updated address",
+        "city": "updated city"
+    }

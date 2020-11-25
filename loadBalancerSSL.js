@@ -32,16 +32,6 @@ let ports = seaport.connect('localhost', 9090);
 // Reference til step 4
 let i = - 1;
 
-// Laver  en proxy ved hjælp af httpProxy.createProxyServer().
-// Dette gør det muligt at videresende request til et mål vi selv definerer.
-const proxy = httpProxy.createProxyServer({});
-
-
-// Med HTTPS
-// Laver vores loadbalancer server om til en ssl-server. 
-// Herfra sendes det samme certifikat og key med som properties. 
-
-
 // Options for https > certifikate and private key
 // Creating the 'options'-object containing the path to the private key and certifikate
 const options = {
@@ -49,12 +39,27 @@ const options = {
     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
 }
 
+// Laver  en proxy ved hjælp af httpProxy.createProxyServer().
+// Dette gør det muligt at videresende request til et mål vi selv definerer.
+//const proxy = httpProxy.createProxyServer({});
+
+const proxy = httpProxy.createServer({
+    ssl: options,
+    target:"https://localhost:3443",
+    secure:false
+}).listen(443)
+
+// Med HTTPS
+// Laver vores loadbalancer server om til en ssl-server. 
+// Herfra sendes det samme certifikat og key med som properties. 
+
+
 // HTTPS-modulet bruges til at oprette en HTTPS-server instans der lytter på port 3443.
 // Load balancere videresender dernest den modtagede klientrequest til én af de registrerede servere baseret på den algoritme vi definerer i cb-funktionen.
 let httpsServer = https.createServer(options, function (req, res) {
     // Bruger ports.query() som returnerer et array med alle registrerede servere i vores seaport-instans
     let addresses = ports.query('server');
-    console.log('------------- ADDRESSES ------------');
+    console.log('\n------------- ADDRESSES ------------');
     console.log(addresses);
 
     if (!addresses.length) {
@@ -80,7 +85,7 @@ let httpsServer = https.createServer(options, function (req, res) {
         // Tilføjer en ekstra parameter efter “target” som er “secure: false”, da det er et self-signed certifikat.
         proxy.web(req, res, { target: 'https://' + host + ':' + port, secure: false }, () => {
         });
-        console.log('------------- FORWARDING REQUEST TO SERVER ------------');
+        console.log('\n------------- FORWARDING REQUEST TO SERVER ------------');
         console.log(`Forwarding request to server on port ${port}`)
     }
 });
