@@ -1,4 +1,9 @@
 const express = require('express');
+// Using the express.Router class to create modular, mountable route handlers.
+// The Router is a kind of routing system - like a 'mini-app'.
+// A router is created as a module. 
+// We define different routes and mounts the router module on a path in the main app (app.js)
+
 const router = express.Router();
 
 // ---------- IMPORT CONTROLLERS ---------- //

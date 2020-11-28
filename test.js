@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const config = require('./config');
 const Client = require("./models/client");
 const Account = require("./models/account");
 const fetch = require("node-fetch");
@@ -8,10 +9,12 @@ const should = chai.should();
 const chaiHttp = require("chai-http");
 const { expect } = require("chai");
 chai.use(chaiHttp);
-const baseUrl = "https://localhost:3443"
+
+const baseUrl = config.baseUrl; //"https://localhost:3443"
 
 // connecto to db
-let connection = mongoose.connect('mongodb://localhost/BankingApp', {
+//let connection = mongoose.connect('mongodb://localhost/BankingApp', {
+let connection = mongoose.connect(config.databaseUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
@@ -157,7 +160,6 @@ describe("Client tests", () => {
                 console.log(err)
               }
               
-    
               done();
             });
         });

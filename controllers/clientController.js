@@ -24,8 +24,10 @@ module.exports = {
             console.log('---------- ALL CLIENTS ---------- ');
             console.log(clients);
 
-            if(!clients[0]) throw {message: "No clients found"}
+            // Checking if there are any client-documents in the collection
+            //if(!clients[0]) throw {message: "No clients found"}
 
+            // Return array with client-documents
             return res.status(200).json(clients)
             
         } catch (err) {
@@ -41,6 +43,7 @@ module.exports = {
         try {
             const { firstname, lastname, streetAddress, city } = req.body;   // extracting client info
 
+            // Creating new client based on data sent in the request body
             let newClient = await Client.create({
                 firstname: firstname,
                 lastname: lastname,
@@ -49,9 +52,9 @@ module.exports = {
             });
 
             console.log('---------- CREATE CLIENT ---------- ');
-            console.log('New client created: ');
-            console.log(newClient);
-
+            console.log('New client created: ', newClient);
+            
+            // Return response with the newly created client object
             return res.status(200).json(newClient)
 
         } catch (err) {
@@ -63,17 +66,22 @@ module.exports = {
     // Endpoint, that returns a specific client by clientId
     getClient: async(req, res) => {
         try {
+            // Extracting clientId from params
             let clientId = req.params.id;
+
             console.log('---------- GET CLIENT ---------- ');
             console.log(`ClientID: ${clientId}`);
 
+            // Find client by the given client ID
             let client = await Client.findById(clientId).exec();
+
+            // Checking if any client exists with the given ID else throw error
             if(!client) throw {message: "No client with given client ID"}
 
-            console.log(`Customer ${client.firstname} has following information: `)
             console.log(`-> CLIENT: `);
-            console.log(client);
-
+            console.log(`Customer ${client.firstname} has following information: `, ckuent)
+            
+            // Return response with the client object
             return res.status(200).json(client)
 
         } catch (err) {
@@ -87,20 +95,22 @@ module.exports = {
     // Todo: Change alias in account with same client ID
     updateClient: async(req, res) => {
         try {
-            let clientId = req.params.id;
+            let clientId = req.params.id; // Extract clientID from params on client that needs to be updated
             const {firstname, lastname, streetAddress, city} = req.body; // extracting customer info
 
             console.log('---------- GET CLIENT ---------- ');
             console.log(`ClientID: ${clientId}`);
 
 
-            // Finding the 'original' account by the account ID
+            // Finding the 'original' client by the account ID
             let originalClient = await Client.findById(clientId).exec();
+
+            // Check if any client exists
             if(!originalClient) throw {message: "No client with given client ID"}
             
             console.log(`Client with current name '${originalClient.firstname}' found: \n`,originalClient );
 
-            /*
+            /* Old
             // Creating the new client object with the properties that needs to be updated
             let newClient = {
                 firstname: firstname || originalClient.firstname,
@@ -143,11 +153,14 @@ module.exports = {
 */
             console.log(`-> CLIENT WAS UPDATED: `);
             console.log(`CLIENT ${updClient.firstname}'s information was updated: `, '\nFrom: ',originalClient,'\nTo: ', updClient )
-            
-            // Update alias in account collection
+
+            /*
+            // Update alias in account collection??
             let updateAccountAlias = await Account.updateMany({"client_id": clientId}, {"alias": updClient.firstname}).exec()
             console.log(updateAccountAlias);
+            */
 
+            // Return the updated client object
             return res.status(200).json(updClient)
 
         } catch (err) {
@@ -161,8 +174,10 @@ module.exports = {
 // -------------------- DELETE client --------------------//
     // Endpoint to delete an excisting client using clientId
     // TODO: if deleting client > accounts with client_id must be deleted to?
+    // Discussion - hard or soft delete? Timestamp instead?
     deleteClient: async(req, res) => {
         try {
+            // Extract ID from params of client that neds to be deleted
             let clientId = req.params.id;
 
             console.log('---------- DELETE CLIENT ---------- ');
@@ -170,6 +185,7 @@ module.exports = {
 
             // Finding the 'original' client by the client ID
             let client = await Client.findById(clientId).exec()
+            // Check if client exists with given ID
             if (!client) throw {message: "No client with th given client ID"}
             //console.log(`Account of customer ${client.firstname} found: `, client);
     
@@ -177,11 +193,13 @@ module.exports = {
             // Delete excisting client using the findByIdAndDelete.
             // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
             let delClient = await Client.findByIdAndDelete(clientId).exec();
+            // Checking if deletion was completed
             if(!delClient) throw {message: "Something went wrong - no client was deleted"}
 
             console.log(`\n-> CLIENT WAS DELETED: `);
             console.log(`Customer ${delClient.firstname} was deleted from the clients-collection\n`, delClient);
  
+            // Return object of the delted client-document
             return res.status(200).json(delClient)
 
         } catch (err) {
@@ -194,26 +212,31 @@ module.exports = {
 // -------------------- GET client accounts --------------------//
     // Get all accounts of a specific client by clientId
     // Endpoint, that returns all accounts of a specific client by client_id
+    // NOT requirement 
     getClientAccounts: async(req, res) => {
         try {
+            // Extract ID of client
             let clientId = req.params.id;
             console.log('---------- GET CLIENT ---------- ');
             console.log(`ClientID: ${clientId}`);
 
+            // Find client by ID
             let client = await Client.findById(clientId).exec();
+            // Chekc if client exists with given ID
             if (!client) throw {message: "No client with th given client ID"};
 
             console.log(`-> CLIENT: `);
             console.log(`Client '${client.firstname}' found: \n`, client);
         
-
+            // Using client_id to filter all acounts that matches
             let accounts = await Account.find({"client_id": clientId}).exec();
+            // Checking if any accounts exists with given client_id
             if (!accounts[0]) throw {message: "The client has no accounts"};
 
             console.log(`-> ACCOUNTS: `);
             console.log(`Client ${client.firstname} has following accounts: \n`, accounts)
     
-
+            // Return array with client-accounts
             return res.status(200).json(accounts)
 
         } catch (err) {

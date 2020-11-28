@@ -1,11 +1,19 @@
+
+/*--app.js--------------------------APP configuration -----------------------------------------------------*/
+
+
 /* Loadbalancer virker med http . IKKE https
 I server.js laver vi vores server, som load balanceren videresender client requests til.
 Vi tilføjer serveren den funktion at lægge alle tal op til 100.000 sammen, og sende summen
 samt serverens portnummer som respons til klienten, så klienten ved, hvilken server den modtager svar fra
  */
 const express = require('express');
-const app = express();
+
 const mongoose = require('mongoose'); //5.10.12
+
+
+// Node.js body parsing middleware.
+// Used to parse incoming request bodies in a middleware before our handlers. Available in the 'req.body'-property.
 const bodyParser = require('body-parser');
 
 // Implmenting modules to use for https (ssl)
@@ -14,17 +22,18 @@ const https = require('https');
 const path = require('path');
 const fs = require('fs');
 
-// Options for https > certifikate and private key
+
+// Creating an options-object containing the self-signed certificate and private key we need for establishing the SSL connection over HTTPS
 // Creating the 'options'-object containing the path to the private key and certifikate
-const options = {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
+const httpsOptions = {
+    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),  // The private key
+    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')) // The certificate
 }
 
 // Importing the database connection
 const db = require("./db.js");
 
-//Import Routes
+// Importing routes
 const accountRoute = require('./routes/accounts');
 const clientRoute = require('./routes/clients.js');
 
@@ -36,6 +45,10 @@ const seaport = require('seaport');
 // From this seaport-instance the severs are registred. 
 const ports = seaport.connect('localhost', 9090);
 
+// express() returns af function, designed to be passed to HTTP and HTTPS servers as a callback to handle requestes.
+const app = express();
+
+//http://expressjs.com/en/api.html#app.listen
 
 /*
 //DB connection
@@ -49,8 +62,10 @@ mongoose.connect('mongodb://localhost/BankingApp', {
 */
 
 
-//Added Json Body-parser
-app.use(bodyParser.json());
+// Added Json Body-parser
+// Returns middleware that only parses json. Only looks at requests where Content-Type-header matches the type option.
+app.use(bodyParser.json()); // Telling our system to use JSON. https://stackoverflow.com/questions/39870867/what-does-app-usebodyparser-json-do
+// Setting 'extended: true', so we can parse nested objects, not only strings or arrays.
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Implementing routes
@@ -82,14 +97,16 @@ app.get('/', (req, res) => {
 
 
 
-// Tilføjer server til seaport - portene vil differentiere fra server til server.
-// The HTTPS-module's createServer-method creates a new server-instance, that listens to specific ports and sends a response to the client.
-// We place a call back function, which contains the app-object. 
-const httpsServer = https.createServer(options, app);
+// The HTTPS-module's createServer-method creates a new server-instance
+// We pass in the httpsOptions-object containing self-signed certificate and public key
+// and pass in our express-app as the requestlistener or callback function. 
+const httpsServer = https.createServer(httpsOptions, app);
 
 
-//Implementing SSL > sslServer start listening
+// Starts the HTTPS server to listen for encrypted connections
+// We register our express server in seaport - the port will differentiate each time a server is initiatd.
 httpsServer.listen(ports.register('server'), function() {
+    // Connecting to our mongoDB-database
     db.getConnection().then(
         console.log("---------- DATABSE CONNECTED ----------\nDatabase is connected")
     
@@ -99,6 +116,4 @@ httpsServer.listen(ports.register('server'), function() {
     console.log(this.address())
 });
 
-// Funktionen i createServer-metoden eksekveres, når nogen forsøger at tilgå computeren på den pågældende port.
-// I dette tilfælde, når loadbalancer videresender en client-request til pågældende servers port.
-// I browser: localhost:8080 ELLER curl http://localhost:8000
+// The load balancer will forward client requests to the respective server's port.
