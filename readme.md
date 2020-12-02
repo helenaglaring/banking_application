@@ -33,23 +33,7 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 - req/opt siger om parametret er obligatorisk eller valgfrit
 
 
-
-| Endpoint              | Metode | body parameters name: Type: req/opt                                                       | Beskrivelse                                                   |
-|-----------------------|--------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------|
-| /accounts             | GET    | -                                                                                         | Returnerer et array af alle konti                             |
-| /accounts             | POST   | client_id: String: req balance: Number: opt                                               | Opretter en ny konto                                          |
-| /accounts/:id         | GET    | -                                                                                         | Returnerer en specific konto                                  |
-| /accounts/:id         | PUT    | balance: Number: opt                                                                      | Ændrer en konto. Det er kun balancen som kan ændres.          |
-| /accounts/:id         | DELETE | -                                                                                         | Sletter en konto med det specifikke id                        |
-| /accounts/:id/balance | GET    | -                                                                                         | Returnerer en specific kontos balance i formen {balance: 200} |
-| /accounts/transfer    | PUT    | fromAccount:String:req toAccount: String: req amount: Number: req                         | Overfører penge fra en konto til en anden                     |
-| /client               | GET    | -                                                                                         | Returnere et array af alle kunder                             |
-| /client               | POST   | firstname: String: req lastname: String: req streetAddress: String: req city: String: req | Opretter en ny kunde                                          |
-| /client/:id           | GET    | -                                                                                         | Returnerer en specific kunde                                  |
-| /client/:id           | PUT    | firstname: String: opt lastname: String: opt streetAddress: String: opt city: String: opt | Opdaterer en kundes oplysninger                               |
-| /client/:id           | DELETE | -                                                                                         | Sletter kunden med det specifikke id                          |
-
-
+![](./public/API_endpoints.png)
 
 ### Non-funktionelle krav
 
