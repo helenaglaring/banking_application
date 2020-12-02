@@ -10,7 +10,7 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 * Client: id (*objectId*), firstname (*String*), lastname (*String*), street_address (*String*), city (*String*)
 * Account: id (*objectId*), balance (*Number*), client_id (*String*), balance (*String*).
 
-2. ystemet skal understøtte følgende CRUD (Create, Read, Update, Delete) funktioner på Client:
+2. Systemet skal understøtte følgende CRUD (Create, Read, Update, Delete) funktioner på Client:
 * Opret ny client (Create).
 * Hent eksisterende client (Read clients' eksisterende oplysninger / detaljer). 
 * Opdater en clients oplysninger (Update).
@@ -53,27 +53,34 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 
 ### Non-funktionelle krav
 
-1. Netværksforbindelser skal være krypteret.
+1. Netværksforbindelser skal være krypteret:
 2. Systemet skal understøtte at der kan oprettes flere instanser af servere, som alle sammen bruger
 den samme underlæggende datakilde (database / fil / hvad end i vælger, den skal bare være
 persistent)
 3. En load balancer skal distribuere trafikken mellem de forskellige servere.
-4. Der skal laves en "one-click-run" løsning. Fx et script som starter hele systemet (loadbalancer,
-forskellige applikationer osv).
+4. Der skal laves en "one-click-run" løsning. Fx et script som starter hele systemet (loadbalancer, forskellige applikationer osv).
 
 ## TEST
 Der udleveres et test script skrevet i mocha, som du kan bruge til at teste jeres endpoints. Dette gøres ved at tilføje "test": "./node_modules/.bin/mocha --timeout 10000 --exit", til din package.json under scripts. Og så testes der gennem npm test . Hvis alt er lavet korrekt, skulle du gerne få 15 passing tests. Husk at dette er blot en hjælp til dig, for at finde ud af, hvor din kode er gået galt.
 
+## Prerequisites
+Node version
+Mongodb version
+
 
 ## Kør programmet
+!! Eksaminator bruger formentlig ikke samme database navn som os, så i må meget gerne gøre opmærksom på, hvilke steder i koden eksaminator skal ændre deres connection string, så den passer til deres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+
 1) Initialiser ved at køre følgende kommando i terminal:
 ```npm install```
 
 2) Kør programmet ved at køre følgende script i terminalen
-```./run.sh```
+```npm start```
 
-3) Send requests, der rammer endpoints.
+3) Test programmet ved at køre test-scriptet i terminalen
+```npm test```
 
+4) Send requests, der rammer endpoints.
 
 ## Fil-struktur
 I **app.js** har vi vores server-configuration. Der oprettes en "Network Socket", som blot er et stykke software, som står for at sende eller modtage data over internettet. I express teminologien er dette et andet udtryk for et endpoint. 
@@ -82,7 +89,7 @@ Så her oprettes vores server, og der oprettes forbindelse til mongoDB-databasen
 
 I **'routes' > 'accounts.js'** har jeg oprettet de forskellige endpoints. Her indikeres selve http-metoden for requesten efterfulgt af endpointets URL. Jeg har valgt at oprette selve logikken for hver endpoint i separate controllers-filer, som derfor er importeret i accounts.js
 
-I **'controllers'-mappen** har jeg oprettet mine controllers, som er selve requesthandlerne, dvs. de funktioner der eksekveres, når et specifikt endpoint rammes. 
+I **'controllers'-mappen** har jeg oprettet mine controllersfor hhv. account og client, som indeholder requesthandlers, dvs. de funktioner der eksekveres, når et specifikt endpoint rammes. 
 
 
 ## Endpoints:
@@ -188,3 +195,29 @@ Denne struktur betyder, at endpoints'ne er den del af serveren som er tilgængel
 4. Disse sendes retur til klienten (fx jeres terminal, hvis der bruges curl) i et format som er tilladt over TCP. Fx en JSON-string.
 
 Nederst ser i et eksempel på en HTTP-post request. Her er metoden sat til `POST`, og der er tilføjet et ekstra felt kaldet `body`. Body indeholder den data, der sendes af sted til serveren. Så når serveren modtager dette på samme endpoint `localhost:8080/accounts`, køres der en anden metode, fordi det er en `POST`request, og det registrerer serveren. Serveren beder derfor databasen om at oprette en ny account. Databasen svarer serveren tilbage med en success eller en failure, og serveren returnerer denne til klienten. 
+
+
+
+
+
+## mongoDB backup og restore af database-dump
+
+### Lav databasedump
+1. Åben mongo-shell
+2. Naviger til den mappe, hvor mongodb er installeret. Kan gøres ved at skrive følgende kommando: `cd /usr/local/var/mongodb`
+
+3. Tag et database dump ved at skrive følgende kommando:`mongodump —db <Navn på database>`
+
+4. Dumpet vil ligge i en mappe ‘dump’, som bliver lagt i mongodb-mappen dvs. den vil have stien: `/usr/local/var/mongodb/dump`. Du kan se 'dump'-mappen, hvis du står i mongodb-mappen i terminalen og skriver “ls”. Så vil den liste alle filer/mapper i mongodb-mappen. 
+
+### Drop nuværende collections
+Du kan droppe collections, for dernæst at restore:
+1. Åben mongo-shell
+2. For at skifte til den database du vil bruge skriv følgende: `use <databasenavn>`
+3. For at se de nuværende collections i databasen skriv: `show collections`
+4. For at droppe collections skriv følgende kommando: `db.<navn på collection>.drop()`, som vil returnere ‘true’
+
+
+### Restore collections og documents fra dump
+1. Du skal navigere til den mappe, hvori ‘dump’-mappen er lokaliseret. 
+2. For et gendanne fra dump skriv følgende: `mongorestore`

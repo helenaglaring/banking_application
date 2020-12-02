@@ -5,12 +5,13 @@
   "main": "app.js",
   "scripts": {
     "start": "./run.sh",
-    "test": "./node_modules/.bin/mocha --timeout 10000 --exit",
+    "test": "./node_modules/.bin/mocha --timeout 10000 --exit --no-warnings",
     "seaport": "./node_modules/.bin/seaport"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.2.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// 3. Finish the account schema
+
 const ClientSchema = new mongoose.Schema({
     /**
      * the schema follows this structure:
@@ -16,19 +16,19 @@ const ClientSchema = new mongoose.Schema({
 
     firstname: {
         type: String,
-        required: true,
+        required: [true, "Please fill out 'firstname"],
     },
     lastname: {
         type: String,
-        required: true,
+        required: [true, "Please fill out 'lastname"],
     },
     streetAddress: {
         type: String,
-        required: true,
+        required: [true, "Please fill out 'streetAddress"],
     },
     city: {
         type: String,
-        required: true,
+        required: [true, "Please fill out 'city"],
     },
 
 });

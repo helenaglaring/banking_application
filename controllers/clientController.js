@@ -15,8 +15,8 @@ getClientAccounts   // GET all client's accounts
 module.exports = {
 
 // -------------------- GET all clients --------------------//
-
     // Endpoint that returns a list with all clients in the clients-collection
+    
     getClients: async(req, res) => {
         try {
             // Using .find() to return all documents in the accounts-collection
@@ -24,8 +24,9 @@ module.exports = {
             console.log('---------- ALL CLIENTS ---------- ');
             console.log(clients);
 
-            // Checking if there are any client-documents in the collection
-            //if(!clients[0]) throw {message: "No clients found"}
+            // Checking if there are any client-documents in the collection by checking length of array
+            // Needs to push error message  into array - else test fails since it checks if response is an array
+            if(!clients[0]) clients.push("No clients found")
 
             // Return array with client-documents
             return res.status(200).json(clients)
@@ -45,11 +46,12 @@ module.exports = {
 
             // Creating new client based on data sent in the request body
             let newClient = await Client.create({
-                firstname: firstname,
-                lastname: lastname,
-                streetAddress: streetAddress,
-                city: city
+                firstname: firstname ? firstname.trim() : firstname,
+                lastname: lastname ? lastname.trim() : lastname,
+                streetAddress: streetAddress ? streetAddress.trim() : streetAddress,
+                city: city ? city.trim() : city
             });
+            if (!newClient) throw {message : 'Error: No new client was created'}
 
             console.log('---------- CREATE CLIENT ---------- ');
             console.log('New client created: ', newClient);
@@ -68,6 +70,8 @@ module.exports = {
         try {
             // Extracting clientId from params
             let clientId = req.params.id;
+            // validation of clientId -  must be 24 characters
+            if(clientId.length !== 24) throw {message: "Error in clientId: ClientId must be 24 characters"}
 
             console.log('---------- GET CLIENT ---------- ');
             console.log(`ClientID: ${clientId}`);
@@ -79,7 +83,7 @@ module.exports = {
             if(!client) throw {message: "No client with given client ID"}
 
             console.log(`-> CLIENT: `);
-            console.log(`Customer ${client.firstname} has following information: `, ckuent)
+            console.log(`Customer ${client.firstname} has following information: `, client)
             
             // Return response with the client object
             return res.status(200).json(client)
@@ -138,19 +142,9 @@ module.exports = {
                 // We want the updated object returned. Therefore we set it to true.
                 {new: true, useFindAndModify: false} ).exec();
 
+            // Checking if update was succesful
+            if(!updClient) throw {message: 'Update failed - The update of client information went wrong'}
 
-/*
-            // Update excisting client using the findByIdAndUpdate.
-            // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
-            let updClient = await Client.findByIdAndUpdate(
-                // Filtering by the _id of the clint we want to update
-                clientId, 
-                // Update all the attributes in the Address schema by passing in the newClient-object with the updated attributes
-                newClient, 
-                // We want the updated object returned. Therefore we set it to true.
-                {new: true, useFindAndModify: false} ).exec();
-
-*/
             console.log(`-> CLIENT WAS UPDATED: `);
             console.log(`CLIENT ${updClient.firstname}'s information was updated: `, '\nFrom: ',originalClient,'\nTo: ', updClient )
 

@@ -1,7 +1,7 @@
 # HOW TO RUN:
 # Hvis i ikke kan køre denne fil, så kan det være fordi i ikke har run/execute access.
 # På mac kan dette gøres ved at køre `sudo chmod 777 <fil_navn>`, og så kan i køre filen med ./<fil_navn> i terminalen. 
-
+# sudo chmod 777 run.sh
 
 # seaport
 echo "\nRunning Seaport"
@@ -28,7 +28,7 @@ sleep 2 # wait until loadbalancer is initialized
 # echo "\nSending curl requests"
 # for i in {1..10}
 # do
-# curl localhost:8080/clients
+# curl localhost:3443/clients
 # echo ""
 # # echo "\n"j
 # sleep 1

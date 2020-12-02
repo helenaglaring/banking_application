@@ -5,6 +5,8 @@ const transactionsModel = require('../models/transactions');
 const db = require("../db.js");
 const mongoose = require('mongoose');
 
+// https://github.com/jeffreynerona/node-bank/blob/master/routes/register.js
+// save og exec
 
 /*
 getAccounts         // GET all accounts
@@ -16,8 +18,6 @@ deleteAccount       // DELETE account
 transfer            // UPDATE 2 account balances
 
 */
-
-// Todo: save() ved update wait toaccount.save(), fromAccount.save
 
 
 module.exports = {
@@ -31,8 +31,10 @@ module.exports = {
             console.log('---------- ALL ACCOUNTS ---------- \n', accounts);
           
             // Checking if the array contains any accounts
-            //if(!accounts[0]) throw { message: "No accounts found" }
-    
+            // Needs to push into array - else test fails since it checks if response is an array
+            if(!accounts[0]) accounts.push("No accounts found")
+            
+            // Return array with account-documents
             return res.status(200).json(accounts)
 
         } catch (err) {
@@ -54,20 +56,21 @@ module.exports = {
             // Checking if clientId exists in the client collection
             if(!client) throw { message: "No client with the given client_id"}
 
-            console.log(`Client with client_id ${client.id} found: `);
-            console.log(client)
+            console.log(`Client with client_id ${client.id} found: `, client);
             
             let newAccount = await Account.create({
                 client_id: client_id,
                 balance: balance,
                 alias:  alias ? alias.trim() : alias // making sure there is no white spaces
             });
-            console.log(!newAccount.ok)
 
+            // Save 
+            let newAccountSaved =  await newAccount.save();
+    
             console.log('---------- NEW ACCOUNT ---------- ');
-            console.log("New account created: ");
-            console.log(newAccount)
+            console.log("New account created: ", newAccountSaved);
 
+            // Return newly created account-document
             return res.status(200).json(newAccount)
 
         } catch (err) {
@@ -82,19 +85,20 @@ module.exports = {
     getAccount: async(req, res) => {
         try {
             let accountId = req.params.id;
-            console.log(accountId.length)
+        
             console.log('---------- GET ACCOUNT ---------- ');
             console.log(`AccountID: ${accountId}`);
 
+            // Find account by accountId
             let account = await Account.findById(accountId).exec();
 
+            // Checking if account exists with given Id
             if(!account) throw { message: "No account found with the given accountId" }
 
-
             console.log(`-> ACCOUNT: `);
-            console.log(`Customer ${account.alias} has following account: `);
-            console.log(account);
-
+            console.log(`Following account was found: `, account);
+           
+            // Return account-object in response
             return res.status(200).json(account)
 
         } catch (err) {
@@ -109,22 +113,24 @@ module.exports = {
     // Endpoint, that will be able to return a specific account-balance by id.
     getAccountBalance: async(req, res) => {
         try {
-        
             let accountId = req.params.id;
 
             console.log('---------- GET ACCOUNT BALANCE ---------- ');
             console.log(`AccountID: ${accountId}`);
 
+            // Find account with given accountId
             let account = await Account.findById(accountId).exec();
+
+            // Checking if account exists with given Id
             if (!account) throw {message: "No account matches the given accountId"}
 
-            console.log(`Account of customer ${account.alias} found: `);
-            console.log(account);
+            console.log(`Account found: `, account);
+         
 
             console.log(`-> ACCOUNT BALANCE: `);
             console.log({"balance": account.balance})
             
-
+            // Return balance of account
             return res.status(200).json({
                 balance: account.balance
             })
@@ -141,11 +147,9 @@ module.exports = {
     updateAccountBalance: async(req, res) => {
         try {
             let accountId = req.params.id;
-            const updBalance = req.body.balance ;   
-            const updAlias = req.body.alias ; 
+
             let {balance, alias} = req.body; // extracting account info
 
-    
 
             console.log('---------- GET ACCOUNT BALANCE ---------- ');
             console.log(`AccountID: ${accountId}`);
@@ -157,13 +161,12 @@ module.exports = {
             // Else throw error
             if (!originalAccount) throw {message: "No account found with the given ID"}
 
-            console.log(`Account of customer ${originalAccount.alias} found: `, originalAccount);
+            console.log(`Account found: `, originalAccount);
 
             console.log(`-> INITIAL ACCOUNT BALANCE: ${originalAccount.balance} kr. `);
 
             // Update excisting account using the findByIdAndUpdate.
-            
-            let updAccount = await Account.findByIdAndUpdate( accountId, 
+            let updAccount = await Account.findByIdAndUpdate(accountId, 
                 // Using logical AND-operator to make sure to update the properties that are sent in req.body.
                 // Else it needs to set the property-value to the original value.
                 { $set: {
@@ -172,13 +175,15 @@ module.exports = {
                 }},
                 // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
                 { new: true, useFindAndModify: false} ).exec();
+            
+            // Save document. But not needed with findByIdAndUpdate.
+            let updAccountSaved = await updAccount.save();
 
             console.log(`-> ACCOUNT BALANCE WAS UPDATED: `);
-            console.log(`Customer ${updAccount.alias}s account balance was updated from: ${originalAccount.balance} kr to ${updAccount.balance} kr`);
-            console.log(updAccount);
+            console.log(`Account balance was updated from: ${originalAccount.balance} kr to ${updAccount.balance} kr`, updAccountSaved);
 
             // Returning response with the object of the updated account
-            return res.status(200).json(updAccount)
+            return res.status(200).json(updAccountSaved)
 
         } catch (err) {
             console.log({ message: err })
@@ -200,16 +205,16 @@ module.exports = {
 
             // Checking if account with given ID exists, else throw error
             if(!account) throw { message: "No account with the given account ID"}
-
-            console.log(`Account of customer ${account.alias} found: `, account);
+            console.log(`Account was found: `, account);
        
-
             // Delete excisting account using the findByIdAndDelete.
             // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
-            let delAccount = await Account.findByIdAndDelete(accountId).exec();
+            let delAccount = await Account.findByIdAndDelete(accountId).exec(); 
+            
+            if(!delAccount) throw { message: "Deletion unsuccesful: No account with the given account ID was deleted"}
 
             console.log(`-> ACCOUNT WAS DELETED: `);
-            console.log(`Customer ${account.alias}'s account was deleted from the accounts-collection: `, delAccount);
+            console.log(`The account was deleted from the accounts-collection: `, delAccount);
 
             // Returning response containing the deleted account-object
             return res.status(200).json(delAccount)
@@ -220,9 +225,88 @@ module.exports = {
         }
     },
 
+
+    // -------------------- TRANSFER --------------------//
+// Problem: the version needed of mongoose fails
+// Transaction implementation
+// https://www.mongodb.com/blog/post/quick-start-nodejs--mongodb--how-to-implement-transactions
+
+    // Endpoint to transfer money from one account to another
+    transfer: async(req, res) => {
+        try {
+            const {fromAccount, toAccount, amount } = req.body;
+            console.log('---------- TRANSACTION FROM ---------- ');
+            console.log(`fromAccountID ${fromAccount}`);
+            // Finding the account from which we are transfering money from
+            let from = await Account.findById(fromAccount).exec();
+            if(!from) throw { message: "Can't find ID on 'from'-account"}
+
+            console.log(`Account of customer ${from.alias} found: `, from);
+            console.log(`-> INITIAL ACCOUNT BALANCE: ${from.balance} kr. `);
+
+
+            console.log('---------- TRANSACTION TO ---------- ');
+            console.log(`toAccountID: ${toAccount}`);
+            // Finding the account from which we are transfering money from
+            let to = await Account.findById(toAccount).exec();
+            if(!to) throw { message: "Can't find ID on 'to'-account"}
+            console.log(`Account of customer ${to.alias} found: `, to);
+            console.log(`-> INITIAL ACCOUNT BALANCE: ${to.balance} kr. `);
+
+             // --------- Check balance ----------//
+            if(from.balance-amount<0) throw { message: 'Not enough money on the account to execute the transaction'}
+
+
+            console.log('---------- TRANSACTION... ---------- ');
+            // --------- TRANSACTION FROM ----------//
+            // Update excisting account using the findByIdAndUpdate.
+            // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
+            let updAccountFrom = await Account.findByIdAndUpdate(
+                fromAccount, // value of _id to query by
+                { $inc: {"balance": -1* amount }},  // update: decrease by amount
+                { // options
+                new: true, // return new updated object
+                useFindAndModify: false
+            }).exec()
+
+            if(!updAccountFrom) throw { message: 'Transaction canceled - Update of "from account" failed'}
+            
+            console.log(`-> ACCOUNT BALANCE WAS UPDATED: `);
+            let updMessageFrom = `Customer ${updAccountFrom.alias}s account balance was updated from: ${from.balance} kr to ${updAccountFrom.balance} kr`
+            console.log(updMessageFrom, updAccountFrom);
+        
+            // --------- TRANSACTION TO ----------//
+            // Update excisting account using the findByIdAndUpdate.
+            // Setting options 'new : true' to return the updated object. If not, it returns the original document by default.
+            let updAccountTo = await Account.findByIdAndUpdate(
+                toAccount, 
+                { $inc: {"balance": +1 * amount} },
+                {
+                new: true,
+                useFindAndModify: false
+            }).exec();
+
+            if(!updAccountTo) throw { message: 'update to account went wrong'}
+
+            console.log(`-> ACCOUNT BALANCE WAS UPDATED: `);
+            let updMessageTo = `Customer ${updAccountTo.alias}s account balance was updated from: ${to.balance} kr to ${updAccountTo.balance} kr`
+            console.log(updMessageTo, updAccountTo);
+            
+        
+            console.log("Transaction was succesfully completed")
+
+            return res.status(200).json({updMessageFrom, updAccountFrom, updMessageTo,updAccountTo })
+
+        } catch(err){
+            console.log('---------- TRANSACTION FAILED ---------- ');
+            console.log(err)
+            return res.status(404).json(err.message);
+        } // end try 
+    }
+    //https://stackoverflow.com/questions/59461391/clientsession-cannot-be-serialized-to-bson
+    
 /*
 // -------------------- TRANSFER --------------------//
-// With transactionmodel
 // save? 
     // Endpoint to transfer money from one account to another
     transfer: async(req, res) => {
@@ -238,7 +322,6 @@ module.exports = {
             let from = await Account.findById(fromAccount).exec();
 
             console.log(`Account of customer ${from.alias} found: `, from);
-    
 
             console.log(`-> INITIAL ACCOUNT BALANCE: ${from.balance} kr. `);
 
@@ -399,7 +482,7 @@ module.exports = {
     }
 };
 */
-
+/*
 // -------------------- TRANSFER --------------------//
 // Problem: the version needed of mongoose fails
 // Transaction implementation
@@ -492,4 +575,5 @@ module.exports = {
         } // end try 
     }
     //https://stackoverflow.com/questions/59461391/clientsession-cannot-be-serialized-to-bson
+    */
 }

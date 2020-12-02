@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 
 const baseUrl = config.baseUrl; //"https://localhost:3443"
 
-// connecto to db
+// connect to db
 //let connection = mongoose.connect('mongodb://localhost/BankingApp', {
 let connection = mongoose.connect(config.databaseUrl, {
   useNewUrlParser: true,
@@ -38,11 +38,11 @@ const accountTemplate = () => {
 };
 
 // before((done) => {
-  // Account.remove({}, () => {
-  //     Client.remove({}, () => {
-  //         done();
-  //     });
-  // });
+//   Account.remove({}, () => {
+//       Client.remove({}, () => {
+//           done();
+//       });
+//   });
 // });
 
 describe("Client tests", () => {
@@ -393,3 +393,5 @@ describe("Account tests", () => {
     });
   });
 });
+
+// Src: https://cbscanvas.instructure.com/courses/11500/files/420245?module_item_id=329690

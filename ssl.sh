@@ -16,7 +16,7 @@
 # we use a self-signed certificate, since we don't use a certificate issued by a trusted CA. 
 
 
-# Create a folder in which we keep our private key and certificate. The folder is created as 'cert' in our root-folder which is the same
+# Create a directiry in which we keep our private key and certificate. The folder is created as 'cert' in our root-folder which is the same
 # as our app.js file is placed.
 echo "Create cert-directory"
 mkdir cert

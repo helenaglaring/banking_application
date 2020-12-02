@@ -1,10 +1,21 @@
 const express = require('express');
-// Using the express.Router class to create modular, mountable route handlers.
-// The Router is a kind of routing system - like a 'mini-app'.
-// A router is created as a module. 
-// We define different routes and mounts the router module on a path in the main app (app.js)
 
+// Using the express.Router()-method to create a new router object which is an isolated instance of routes.
+// It is a kind of routing system - like a 'mini-app' capable of performing routing functions and middleware. 
+// We create a router as a module, and afterwards we add different HTTP method routes to it.
 const router = express.Router();
+
+
+/*
+Express routing determines how our application responds the client request to a specific endpoint (aka URI or path) 
+and a certain HTTP request method (GET, POST, PUT, DELETE etc.).
+
+Every route can have one or more handler functions, that execute when the corresponding route is matched. 
+
+On the router-instance the HTTP request method is specified, the path on the server and a handler
+which is the function that is executed when the route is matched. 
+
+*/
 
 // ---------- IMPORT CONTROLLERS ---------- //
 const accountController = require('../controllers/accountController')
@@ -34,5 +45,9 @@ router.delete('/:id', accountController.deleteAccount);             // DELETE ac
 router.get('/:id/balance', accountController.getAccountBalance);    // GET account balance
 
 
-
+// The router-object is exported so we can import the routes and corresponding requesthandlers in the main app.
+// Since a router behaves like middleware, we can pass it as an argument to app.use() which is done in app.js
 module.exports = router;
+
+
+// Src: https://expressjs.com/en/starter/basic-routing.html
