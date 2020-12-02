@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-
+// Creating the Client-model and defining the shcema of the Client-collection
 const ClientSchema = new mongoose.Schema({
     /**
      * the schema follows this structure:

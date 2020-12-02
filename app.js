@@ -1,27 +1,19 @@
 
 /*--app.js--------------------------APP configuration -----------------------------------------------------*/
+// In app.js we create our server application, to which the load balancer forwards client requests.
 
-
-/* Loadbalancer virker med http . IKKE https
-I server.js laver vi vores server, som load balanceren videresender client requests til.
-Vi tilføjer serveren den funktion at lægge alle tal op til 100.000 sammen, og sende summen
-samt serverens portnummer som respons til klienten, så klienten ved, hvilken server den modtager svar fra
- */
 const express = require('express');
-
 const mongoose = require('mongoose'); //5.10.12
-
 
 // Node.js body parsing middleware.
 // Used to parse incoming request bodies in a middleware before our handlers. Available in the 'req.body'-property.
 const bodyParser = require('body-parser');
 
-// Implmenting modules to use for https (ssl)
+// Implmenting modules to use for secure communication through HTTPS (SSL/TLS)
 // Importing Node.js' built-in HTTPS-module, that allows Node.js to transfer data via 'Hyper Text Transfer Protocol Secure' (HTTPS).
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
-
 
 // Creating an options-object containing the self-signed certificate and private key we need for establishing the SSL connection over HTTPS
 // Creating the 'options'-object containing the path to the private key and certifikate
@@ -48,7 +40,6 @@ const ports = seaport.connect('localhost', 9090);
 // express() returns af function, designed to be passed to HTTP and HTTPS servers as a callback to handle requestes.
 const app = express();
 
-//http://expressjs.com/en/api.html#app.listen
 
 /*
 //DB connection
@@ -83,19 +74,18 @@ app.use('/', (req, res) => {
 })*/
 
 
-//Initial route
+// Initial route
 app.get('/', (req, res) => {
+    // Get port on which the specific server is running
     let port = req.socket.address().port;
     console.log('---------- Server received client request ----------');
-    console.log(`Server with port: ${port} received a message`);
+    console.log(`Server with port: ${port} received a request`);
 
-    // Sender respons til klient
+    // Sending client response with the port of the server, that the load balancer forwarded the request to
     console.log('---------- Server has sent client response ----------');
 
     res.send('Welcome to the banking app - Response from server on port: ' + port);
 });
-
-
 
 // The HTTPS-module's createServer-method creates a new server-instance
 // We pass in the httpsOptions-object containing self-signed certificate and public key
@@ -117,3 +107,6 @@ httpsServer.listen(ports.register('server'), function() {
 });
 
 // The load balancer will forward client requests to the respective server's port.
+
+
+// Src: http://expressjs.com/en/api.html#app.listen

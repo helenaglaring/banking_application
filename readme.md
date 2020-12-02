@@ -92,7 +92,7 @@ I **'controllers'-mappen** har jeg oprettet mine controllersfor hhv. account og 
    ```GET https://localhost:3443/accounts/:id```
 
 
-**4) Ændrer en konto. Det er kun balancen som kan ændres**
+**4) Opdaterer en konto**
 
    ```PUT https://localhost:3443/accounts/:id```
 
@@ -130,7 +130,7 @@ er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er belø
 
    ```PUT https://localhost:3443/client/:id``` 
 
-**12) Sletter kunden med det specifikke id**
+**12) Sletter kunde med det specifikke id**
 
    ```DELETE https://localhost:3443/client/:id``` 
 

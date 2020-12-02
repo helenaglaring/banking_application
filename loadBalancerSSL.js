@@ -1,3 +1,4 @@
+/*--loadBalancerSSL.js-------------------------- Load balancer -----------------------------------------------------*/
 
 /*
 Here a simple load balancer is implemented based on the Round Robin-method, that forwards requests to 
@@ -14,7 +15,7 @@ As consequence the servers with less capacity will be overloaded and fail while 
 An alternative is Weighted Round Robin, which 
 */
 
-// Importorting the modules to use for HTTPS (SSL-connection)
+// Importing the modules to use for HTTPS (SSL/TLS-connection)
 const https = require('https');
 const path = require('path');
 const fs = require('fs');
@@ -23,7 +24,6 @@ const config = require('./config');
 // Importing the http-proxy-module, which is an HTTP-proxy library supporting websockets.
 // It is used to implement our load balancer
 const httpProxy = require('http-proxy');
-
 
 // Importing the 'seaport'-modulet, that is a service used to distribute requests to given ports.
 const seaport = require('seaport');
@@ -41,7 +41,6 @@ const httpsOptions = {
     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
 }
-
 
 // Activating the validation of a secure SSL certificate to the target connection
 // Creating a new proxy using httpsProxy.createProxyServer().
@@ -95,23 +94,13 @@ let httpsServer = https.createServer(httpsOptions, function (req, res) {
     }
 });
 
-// The load balancer listens to port 3443 for HTTPS
+// The load balancer listens to port 3443 for HTTPS.
+// The load balancer exchanges equally between the registered server instances.
 httpsServer.listen(3443, function() {
     console.log('---------- LOAD BALANCER LISTENING  ----------');
     console.log('Load-balancer listening on port %d', 3443)
 });
 
 
-/*
-For at starte load balanceren skrives følgende:
-
-npm run seaport listen 9090 (da vi bruger port 9090)
-node load-balancer.js (I en anden terminal)
-node server.js (I lige så mange terminaler som vi har lyst. Hver gang dette skrives, initieres en ny server).
-
-Hvis alt er gået som planlagt, bør vi kunne skrive curl http://localhost:3443 i terminalen,
-for at sende en request til load balanceren.
-
-Hver anden request vil blive sendt til en anden port.
-
-*/
+// Don't run port lower than 1024
+// https://stackoverflow.com/questions/11744975/enabling-https-on-express-js
