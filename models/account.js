@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 
+// Creating the Account-model and defining the shcema of the Account-collection
 const AccountSchema = new mongoose.Schema({
     /**
      * the schema follows this structure:

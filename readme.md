@@ -150,7 +150,7 @@ er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er belø
 For at kunne løse ovenstående opgave, har vi brug for to ting:
 
 1. En server, som kan håndtere forskellige endpoints. 
-   * Et endpoint er et sted på serveren, som trigger en bestemt respons, og er typisk formatteret som addresse:port/api/endpoint/metode fx localhost:8000/api/accounts/. I dette tilfælde er der ikke en decideret metode, fordi vi "bare" ønsker at manipulere accounts. Det betyder, at vi sender vi HTTP-requests som sendes over TCP-protokollen, og som rammer et givent endpoint, som trigger en handling. En HTTP-request kan have forskellige metoder:
+   * Et endpoint er et sted på serveren, som trigger en bestemt respons, og er typisk formatteret som addresse:port/api/endpoint/metode fx localhost:3443/api/accounts/. I dette tilfælde er der ikke en decideret metode, fordi vi "bare" ønsker at manipulere accounts. Det betyder, at vi sender vi HTTP-requests som sendes over TCP-protokollen, og som rammer et givent endpoint, som trigger en handling. En HTTP-request kan have forskellige metoder:
      `GET` er et standard kald, som bruges til at efterspørge specifikke ressourcer eller information herom. Den bruges typisk med ex `curl` eller når der indtastes en adresse i browseren. Denne rammer et endpoint med en forventing om at få noget data retur.
 
      `POST` bruges til at oprette nye ressourcer, når vi eksempelvis ønsker at tilføje noget til vores database. Dette ved at sende data med i en request, her gennem request-body. Vi bruger POST-requestet til at oprette et nyt account-document i vores account-collection. 
@@ -163,7 +163,7 @@ For at kunne løse ovenstående opgave, har vi brug for to ting:
      `DELETE` bruges til at slette  data i databasen. Her bruger vi DELETE til at slette en specific ressource fra vores account-collection baseret på account-ID'et.
 
 
-     Hvis dette skal relateres til endpoints, så betyder det, at når vi sender et HTTP request med metoden `GET`til eksempelvis `localhost:8000/accounts`, så forventer vi at få en liste af accounts tilbage. Hvis vi sender en `POST`til samme addresse, forventer vi, at der sendes noget data med, som der kan oprettes en ny account ud fra. 
+     Hvis dette skal relateres til endpoints, så betyder det, at når vi sender et HTTP request med metoden `GET`til eksempelvis `localhost:3443/accounts`, så forventer vi at få en liste af accounts tilbage. Hvis vi sender en `POST`til samme addresse, forventer vi, at der sendes noget data med, som der kan oprettes en ny account ud fra. 
 
 2. En database som indeholder vores persistente data.
 
@@ -171,16 +171,18 @@ For at kunne løse ovenstående opgave, har vi brug for to ting:
 
 Denne struktur betyder, at endpoints'ne er den del af serveren som er tilgængelige for omverdenen. Det er disse som omverdenen bruger til at kommunikere med serveren og manipulere dataen. Udover dette er serveren for det meste forbundet til noget data storage som fx en database. Forholdet kan illustreres således:
 
-![](https://i.imgur.com/aVhW3sA.jpeg)
-
-1. Der sendes en HTTP-request til endpointet. Fx `curl localhost:8080/accounts`. Ved denne komando sendes der en `GET` request. Serveren modtager `GET` requesten på `/accounts` og kalder den dertilhørende kode.
-2. Denne kode querier databasen og beder om alle accounts, der ligger i denne.
-3. Databasen returnere en liste med accounts til serveren
-4. Disse sendes retur til klienten (fx jeres terminal, hvis der bruges curl) i et format som er tilladt over TCP. Fx en JSON-string.
-
-Nederst ser i et eksempel på en HTTP-post request. Her er metoden sat til `POST`, og der er tilføjet et ekstra felt kaldet `body`. Body indeholder den data, der sendes af sted til serveren. Så når serveren modtager dette på samme endpoint `localhost:8080/accounts`, køres der en anden metode, fordi det er en `POST`request, og det registrerer serveren. Serveren beder derfor databasen om at oprette en ny account. Databasen svarer serveren tilbage med en success eller en failure, og serveren returnerer denne til klienten. 
+![](./public/API_GET.png)
 
 
+1. Der sendes en HTTP-request til endpointet fra klienten. Fx `curl localhost:3443/clients/:id`. Ved denne komando sendes der en `GET` request. Serveren modtager `GET` requesten på `/clients` og kalder den dertilhørende kode.
+2. Denne kode, i form af en controller, querier databasen, der udfører en READ-operation på den requestede ressource i databasen. Her et specifikt dokument, med det id, der er specificeret i URI'en.
+3. Databasen returnerer client-dokumentet med det givne ID til serveren.
+4. Serveren sender det ønskede client-objekt som respons til klienten i et format, som kom-munikationen over TCP tillader – her JSON-format. 
+
+
+Nedenfor ses eksempel på en HTTP-post request. Her er metoden sat til `POST`, og der er tilføjet et ekstra felt kaldet `body`. Body indeholder den data, der sendes af sted til serveren. Så når serveren modtager dette på samme endpoint `localhost:3443/accounts`, køres der en anden metode, fordi det er en `POST`request, og det registrerer serveren. Serveren beder derfor databasen om at oprette en ny account. Databasen svarer serveren tilbage med en success eller en failure, og serveren returnerer denne til klienten. 
+
+![](./public/API_POST.png){:height="36px" width="36px"}
 
 
 
@@ -205,3 +207,7 @@ Du kan droppe collections, for dernæst at restore:
 ### Restore collections og documents fra dump
 1. Du skal navigere til den mappe, hvori ‘dump’-mappen er lokaliseret. 
 2. For et gendanne fra dump skriv følgende: `mongorestore`
+
+
+
+SRC: https://github.com/DIS-2020/bankingApplication/tree/solution
