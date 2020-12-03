@@ -1,11 +1,47 @@
 # DIS EKSAMEN 2020 - Banking application
-
+Banking applikation udviklet med Express, MongoDB og NodeJS.
 Følgende program er et simpelt bank system udviklet til en bankkasserer. Systemet består af en server applikation, hvor man skal kunne hente alle konti samt et enkelt konto ud fra et id. Systemet skal dernæst udvides til at understøtte de følgende obligatoriske krav:
 
 
-## Funktionelle og non-funktionelle krav
+# Prerequisites
+- NodeJS version
+- Mongodb version
+- Express version
 
-### Funktionelle krav
+
+## Kør programmet
+!! Eksaminator bruger formentlig ikke samme database navn som os, så i må meget gerne gøre opmærksom på, hvilke steder i koden eksaminator skal ændre deres connection string, så den passer til deres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+
+1) Initialiser ved at køre følgende kommando i terminal:
+```npm install```
+
+2) Kør programmet ved at køre følgende script i terminalen
+```npm start```
+
+3) Test programmet ved at køre test-scriptet i terminalen
+```npm test```
+
+4) Send requests, der rammer endpoints.
+
+
+
+## TEST
+Der er udleveret et test script skrevet i mocha, som kan bruges til at teste systemets endpoints. Dette gøres ved at tilføje `"test": "./node_modules/.bin/mocha --timeout 10000 --exit"`, til package.json under scripts. Og så testes der gennem `npm test` . Hvis alt er lavet korrekt, skulle du gerne få 15 passing tests. 
+
+
+## Fil-struktur
+I **app.js** har vi vores server-configuration. Der oprettes en "Network Socket", som blot er et stykke software, som står for at sende eller modtage data over internettet. I express teminologien er dette et andet udtryk for et endpoint. 
+Så her oprettes vores server, og der oprettes forbindelse til mongoDB-databasen. Vi importerer routes fra 'routes' > 'accounts.js', som er alle vores endpoints.
+
+
+I **'routes' > 'accounts.js'** har jeg oprettet de forskellige endpoints. Her indikeres selve http-metoden for requesten efterfulgt af endpointets URL. Jeg har valgt at oprette selve logikken for hver endpoint i separate controllers-filer, som derfor er importeret i accounts.js
+
+I **'controllers'-mappen** har jeg oprettet mine controllersfor hhv. account og client, som indeholder requesthandlers, dvs. de funktioner der eksekveres, når et specifikt endpoint rammes. 
+
+
+# Funktionelle og non-funktionelle krav
+
+## Funktionelle krav
 1. Systemet skal indeholde to modeller. **Clients** (kunder) og **Accounts** (konti). Disse skal indeholde følgende felter
 * Client: id (*objectId*), firstname (*String*), lastname (*String*), street_address (*String*), city (*String*)
 * Account: id (*objectId*), balance (*Number*), client_id (*String*), balance (*String*).
@@ -35,7 +71,7 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 
 ![](./public/API_endpoints.png)
 
-### Non-funktionelle krav
+## Non-funktionelle krav
 
 1. Netværksforbindelser skal være krypteret:
 2. Systemet skal understøtte at der kan oprettes flere instanser af servere, som alle sammen bruger
@@ -44,37 +80,16 @@ persistent)
 3. En load balancer skal distribuere trafikken mellem de forskellige servere.
 4. Der skal laves en "one-click-run" løsning. Fx et script som starter hele systemet (loadbalancer, forskellige applikationer osv).
 
-## TEST
-Der udleveres et test script skrevet i mocha, som du kan bruge til at teste jeres endpoints. Dette gøres ved at tilføje "test": "./node_modules/.bin/mocha --timeout 10000 --exit", til din package.json under scripts. Og så testes der gennem npm test . Hvis alt er lavet korrekt, skulle du gerne få 15 passing tests. Husk at dette er blot en hjælp til dig, for at finde ud af, hvor din kode er gået galt.
-
-## Prerequisites
-Node version
-Mongodb version
 
 
-## Kør programmet
-!! Eksaminator bruger formentlig ikke samme database navn som os, så i må meget gerne gøre opmærksom på, hvilke steder i koden eksaminator skal ændre deres connection string, så den passer til deres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+# Datamodeller
 
-1) Initialiser ved at køre følgende kommando i terminal:
-```npm install```
+## ERD
 
-2) Kør programmet ved at køre følgende script i terminalen
-```npm start```
-
-3) Test programmet ved at køre test-scriptet i terminalen
-```npm test```
-
-4) Send requests, der rammer endpoints.
-
-## Fil-struktur
-I **app.js** har vi vores server-configuration. Der oprettes en "Network Socket", som blot er et stykke software, som står for at sende eller modtage data over internettet. I express teminologien er dette et andet udtryk for et endpoint. 
-Så her oprettes vores server, og der oprettes forbindelse til mongoDB-databasen. Vi importerer routes fra 'routes' > 'accounts.js', som er alle vores endpoints.
+![](./public/ERD_banking_application.png)
 
 
-I **'routes' > 'accounts.js'** har jeg oprettet de forskellige endpoints. Her indikeres selve http-metoden for requesten efterfulgt af endpointets URL. Jeg har valgt at oprette selve logikken for hver endpoint i separate controllers-filer, som derfor er importeret i accounts.js
-
-I **'controllers'-mappen** har jeg oprettet mine controllersfor hhv. account og client, som indeholder requesthandlers, dvs. de funktioner der eksekveres, når et specifikt endpoint rammes. 
-
+# API
 
 ## Endpoints:
 
@@ -139,11 +154,8 @@ er ID'et på den konto, der skal overføres penge til. 3) 'amount', som er belø
    ```GET https://localhost:3443/client/:id/accounts``` 
 
 
-## Datamodeller
 
-### ERD
 
-![](./public/ERD_banking_application.png)
 
 
 ##  Generelt om opgaven
