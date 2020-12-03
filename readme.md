@@ -89,6 +89,11 @@ persistent)
 ![](./public/ERD_banking_application.png)
 
 
+# Arkitektur
+Systemet er udviklet efter 3-tier arkitekturen bestående af en klient, server og database. 
+
+![](./public/3_tier_architecture.png)
+
 # API
 
 ## Endpoints:
