@@ -11,8 +11,6 @@ The requests is forwarded to one of the express-servers (app.js) based on Round 
 The drawback of th RR-algorithm is, that it assumes that the servers are similar enough to handle equally distributed load.
 If some servers have more CPU, RAM etc. the algorithm can't distribute more requests to these servers. 
 As consequence the servers with less capacity will be overloaded and fail while the capacity on other servers are *empty?
-
-An alternative is Weighted Round Robin, which 
 */
 
 // Importing the modules to use for HTTPS (SSL/TLS-connection)
@@ -48,7 +46,7 @@ const httpsOptions = {
 const proxy = httpProxy.createServer({
     ssl: httpsOptions,
     target: config.baseUrl,//"https://localhost:3443",
-    secure: false // Because it is a self-signed certigicate
+    secure: false // Because it is a self-signed certificate
 }).listen(443)
 
 
@@ -97,8 +95,8 @@ let httpsServer = https.createServer(httpsOptions, function (req, res) {
 // The load balancer listens to port 3443 for HTTPS.
 // The load balancer exchanges equally between the registered server instances.
 httpsServer.listen(3443, function() {
-    console.log('---------- LOAD BALANCER LISTENING  ----------');
-    console.log('Load-balancer listening on port %d', 3443)
+    console.log('---------- LOAD BALANCER ----------');
+    console.log('Load balancer listening on port %d', 3443)
 });
 
 

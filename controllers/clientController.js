@@ -16,7 +16,7 @@ module.exports = {
 
 // -------------------- GET all clients --------------------//
     // Endpoint that returns a list with all clients in the clients-collection
-    
+
     getClients: async(req, res) => {
         try {
             // Using .find() to return all documents in the accounts-collection
@@ -40,7 +40,6 @@ module.exports = {
 // -------------------- CREATE new client --------------------//
     // Endpoint for creating a new client
     createClient: async(req, res) => {
-    
         try {
             const { firstname, lastname, streetAddress, city } = req.body;   // extracting client info
 
@@ -64,6 +63,7 @@ module.exports = {
             return res.status(404).json(err.message);
         }
     },
+
 // -------------------- GET client --------------------//
     // Endpoint, that returns a specific client by clientId
     getClient: async(req, res) => {
@@ -203,10 +203,9 @@ module.exports = {
     },
 
 
-// -------------------- GET client accounts --------------------//
+// -------------------- GET client accounts - NOT REQUIRED --------------------//
     // Get all accounts of a specific client by clientId
     // Endpoint, that returns all accounts of a specific client by client_id
-    // NOT requirement 
     getClientAccounts: async(req, res) => {
         try {
             // Extract ID of client

@@ -10,10 +10,10 @@ const clientController = require('../controllers/clientController')
 router.get('/', clientController.getClients);                       // GET all clients
 
 // Endpoint for creating a new clint
-router.post('/', clientController.createClient);                    // GET client
+router.post('/', clientController.createClient);                    // POST new client
 
 // Endpoint for getting one client
-router.get('/:id', clientController.getClient);                     // POST new client
+router.get('/:id', clientController.getClient);                      // GET client
 
 // Endpoint to update the information of an excisting client
 router.put('/:id', clientController.updateClient);                  // UPDATE client information

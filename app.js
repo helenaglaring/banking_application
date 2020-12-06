@@ -1,5 +1,5 @@
 
-/*--app.js--------------------------APP configuration -----------------------------------------------------*/
+/*--app.js-------------------------- APP configuration -----------------------------------------------------*/
 // In app.js we create our server application, to which the load balancer forwards client requests.
 
 const express = require('express');
@@ -52,7 +52,6 @@ mongoose.connect('mongodb://localhost/BankingApp', {
 )
 */
 
-
 // Added Json Body-parser
 // Returns middleware that only parses json. Only looks at requests where Content-Type-header matches the type option.
 app.use(bodyParser.json()); // Telling our system to use JSON. https://stackoverflow.com/questions/39870867/what-does-app-usebodyparser-json-do
@@ -62,17 +61,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Implementing routes
 app.use('/accounts', accountRoute);
 app.use('/clients', clientRoute);
-
-
-/*
-app.use('/', (req, res) => {
-    console.log('---------- Server received client request ----------');
-    console.log(`Server with port: ${this.address().port} received a message`);
-
-    // Sender respons til klient
-    console.log('---------- Server has sent client response ----------');
-})*/
-
 
 // Initial route
 app.get('/', (req, res) => {
@@ -98,10 +86,10 @@ const httpsServer = https.createServer(httpsOptions, app);
 httpsServer.listen(ports.register('server'), function() {
     // Connecting to our mongoDB-database
     db.getConnection().then(
-        console.log("---------- DATABSE CONNECTED ----------\nDatabase is connected")
+        console.log("---------- DATABSE ----------\nDatabase is connected")
     
     );
-    console.log('---------- SERVER LISTENING  ----------');
+    console.log('---------- SERVER ----------');
     console.log('Server listening on port %d', this.address().port);
     console.log(this.address())
 });

@@ -10,10 +10,12 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 
 
 ## Kør programmet
-!! Eksaminator bruger formentlig ikke samme database navn som os, så i må meget gerne gøre opmærksom på, hvilke steder i koden eksaminator skal ændre deres connection string, så den passer til deres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+!! Eksaminator 
 
 1) Initialiser ved at køre følgende kommando i terminal:
 ```npm install```
+
+2) Juster config-filen i /config/config.js. Du bruger formentlig ikke samme database navn som mig, så der gøres derfor opmærksom på, at connection string skal tilpasses, så den passer til jeres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
 
 2) Kør programmet ved at køre følgende script i terminalen
 ```npm start```
@@ -199,13 +201,13 @@ Denne struktur betyder, at endpoints'ne er den del af serveren som er tilgængel
 
 Nedenfor ses eksempel på en HTTP-post request. Her er metoden sat til `POST`, og der er tilføjet et ekstra felt kaldet `body`. Body indeholder den data, der sendes af sted til serveren. Så når serveren modtager dette på samme endpoint `localhost:3443/accounts`, køres der en anden metode, fordi det er en `POST`request, og det registrerer serveren. Serveren beder derfor databasen om at oprette en ny account. Databasen svarer serveren tilbage med en success eller en failure, og serveren returnerer denne til klienten. 
 
-![](./public/API_POST.png){:height="36px" width="36px"}
+![](./public/API_POST.png)
 
 
 
-## mongoDB backup og restore af database-dump
+# mongoDB backup og restore af database-dump
 
-### Lav databasedump
+## Lav databasedump
 1. Åben mongo-shell
 2. Naviger til den mappe, hvor mongodb er installeret. Kan gøres ved at skrive følgende kommando: `cd /usr/local/var/mongodb`
 
@@ -213,7 +215,7 @@ Nedenfor ses eksempel på en HTTP-post request. Her er metoden sat til `POST`, o
 
 4. Dumpet vil ligge i en mappe ‘dump’, som bliver lagt i mongodb-mappen dvs. den vil have stien: `/usr/local/var/mongodb/dump`. Du kan se 'dump'-mappen, hvis du står i mongodb-mappen i terminalen og skriver “ls”. Så vil den liste alle filer/mapper i mongodb-mappen. 
 
-### Drop nuværende collections
+## Drop nuværende collections
 Du kan droppe collections, for dernæst at restore:
 1. Åben mongo-shell
 2. For at skifte til den database du vil bruge skriv følgende: `use <databasenavn>`
@@ -221,7 +223,7 @@ Du kan droppe collections, for dernæst at restore:
 4. For at droppe collections skriv følgende kommando: `db.<navn på collection>.drop()`, som vil returnere ‘true’
 
 
-### Restore collections og documents fra dump
+## Restore collections og documents fra dump
 1. Du skal navigere til den mappe, hvori ‘dump’-mappen er lokaliseret. 
 2. For et gendanne fra dump skriv følgende: `mongorestore`
 

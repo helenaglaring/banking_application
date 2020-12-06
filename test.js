@@ -10,10 +10,10 @@ const chaiHttp = require("chai-http");
 const { expect } = require("chai");
 chai.use(chaiHttp);
 
-const baseUrl = config.baseUrl; //"https://localhost:3443"
+const baseUrl = config.baseUrl; // "https://localhost:3443"
 
 // connect to db
-//let connection = mongoose.connect('mongodb://localhost/BankingApp', {
+// let connection = mongoose.connect('mongodb://localhost/BankingApp', {
 let connection = mongoose.connect(config.databaseUrl, {
   useNewUrlParser: true,
   useCreateIndex: true,

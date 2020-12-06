@@ -38,7 +38,7 @@ openssl genrsa -out key.pem
 # We instruct the express server to identify itself by using the issued certificate and 'force' the clients to connect over TLS.
 
 # -- Certificate signing request --
-# We request a new certificate based on our private key in the key.pem-file
+# We request a new certificate based on our key in the key.pem-file
 echo "Certificate signing request"
 openssl req -new -key key.pem -out csr.pem -subj "/C=DK/O=CBS"
 # Generates a csr.pem file in the 'cert'-directory
