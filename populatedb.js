@@ -1,17 +1,10 @@
-#! /usr/bin/env node
-// https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose
 
 // node populatedb mongodb://localhost/BankingApp
-console.log('This script populates some test client, and accountinstances to the database. Specified database as argument - e.g.: populatedb mongodb://localhost/BankingApp');
+console.log('This script populates some test client, and account instances to the database. Specified database as argument - e.g.: populatedb mongodb://localhost/BankingApp');
 
 // Get arguments passed on command line
 var userArgs = process.argv.slice(2);
-/*
-if (!userArgs[0].startsWith('mongodb')) {
-    console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
-    return
-}
-*/
+
 var async = require('async')
 var Client = require('./models/client')
 var Account = require('./models/account')
@@ -27,19 +20,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 var clients = []
 var accounts = []
 
-async function dropAllDocuments() {
-  try {
-    await Client.deleteMany({});
-    await Account.deleteMany({});
-   
-  } catch (err) {
-    console.log(err)
-  }
-}
-
 
 const clearDB = async () => {
-  console.log(mongoose.connection.collections)
   Object.keys(mongoose.connection.collections).forEach(async key => {
    await mongoose.connection.collections[key].deleteMany({});
   });
@@ -178,10 +160,10 @@ function(err, results) {
         console.log('\nACCOUNTinstances: '+ accounts);
         
     }
-    // All done, disconnect from database
+    // Done, disconnect from database
     mongoose.connection.close();
 });
 
 
 
-
+// src: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose

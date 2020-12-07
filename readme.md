@@ -4,6 +4,7 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 
 
 # Prerequisites
+- Git 
 - NodeJS version
 - Mongodb version
 - Express version
@@ -12,10 +13,16 @@ Følgende program er et simpelt bank system udviklet til en bankkasserer. System
 ## Kør programmet
 !! Eksaminator 
 
+
+- Juster config-filen i /config/config.js. Du bruger formentlig ikke samme database navn som mig, så der gøres derfor opmærksom på, at connection string skal tilpasses, så den passer til jeres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+- Databasens kollektioner skal hedde "accounts" og "clients"
+
+
 1) Initialiser ved at køre følgende kommando i terminal:
 ```npm install```
 
-2) Juster config-filen i /config/config.js. Du bruger formentlig ikke samme database navn som mig, så der gøres derfor opmærksom på, at connection string skal tilpasses, så den passer til jeres database. Den hedder formentlig noget ala mongodb://localhost/<jeres database navn>.
+- Ved at køre følgende kommando vil alle eksisterende dokumenter i databasens collections blive dropped, og databasen kan gendannes ud fra database-dumpet i 'dump'-mappen. 
+`node populatedb mongodb://localhost/<jeres database navn>`
 
 2) Kør programmet ved at køre følgende script i terminalen
 ```npm start```
