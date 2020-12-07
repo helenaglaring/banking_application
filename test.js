@@ -228,7 +228,7 @@ describe("Account tests", () => {
   describe("/POST accounts", () => {
     it("it should POST account 1", (done) => {
       let account = accountTemplate();
-      account.client_id = client._id;
+      account.client_id = client.id;
       chai
         .request(baseUrl)
         .post("/accounts")
@@ -241,7 +241,7 @@ describe("Account tests", () => {
     });
     it("it should POST account 2", (done) => {
       let account = accountTemplate();
-      account.client_id = client._id;
+      account.client_id = client.id;
       chai
         .request(baseUrl)
         .post("/accounts")
